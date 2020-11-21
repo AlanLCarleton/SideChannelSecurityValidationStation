@@ -1,0 +1,85 @@
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+  
+  <head>
+    
+      <meta charset="utf-8">
+      <title>Bokeh Plot</title>
+      
+      
+        
+          
+        
+        
+          
+        <script type="text/javascript" src="https://cdn.bokeh.org/bokeh/release/bokeh-2.2.3.min.js" integrity="sha384-T2yuo9Oe71Cz/I4X9Ac5+gpEa5a8PpJCDlqKYO0CfAuEszu1JrXLl8YugMqYe3sM" crossorigin="anonymous"></script>
+        <script type="text/javascript">
+            Bokeh.set_log_level("info");
+        </script>
+        
+      
+      
+    
+  </head>
+  
+  
+  <body>
+    
+      
+        
+          
+          
+            
+              <div class="bk-root" id="aa0fa5d9-b5fe-4bf0-9e31-9f62647fa55e" data-root-id="26430"></div>
+            
+          
+        
+      
+      
+        <script type="application/json" id="26548">
+          {"c09c405f-a001-4b8d-a601-e80ca18aa06e":{"roots":{"references":[{"attributes":{"below":[{"id":"26441"}],"center":[{"id":"26444"},{"id":"26448"}],"left":[{"id":"26445"}],"renderers":[{"id":"26466"}],"title":{"id":"26431"},"toolbar":{"id":"26456"},"x_range":{"id":"26433"},"x_scale":{"id":"26437"},"y_range":{"id":"26435"},"y_scale":{"id":"26439"}},"id":"26430","subtype":"Figure","type":"Plot"},{"attributes":{},"id":"26454","type":"HelpTool"},{"attributes":{"line_alpha":0.1,"line_color":"red","x":{"field":"x"},"y":{"field":"y"}},"id":"26465","type":"Line"},{"attributes":{"data":{"x":[0,1,2,3,4,5,6,7,8],"y":{"__ndarray__":"AAAAAABQ07/x8PDw8FDOv/cS2kto382/xjUW11j8zL83+LflTEfOv3arEF63ysy/BXlKkKfkzL9JkiRJkrTLv6uqqqqqmsu/","dtype":"float64","order":"little","shape":[9]}},"selected":{"id":"26474"},"selection_policy":{"id":"26475"}},"id":"26463","type":"ColumnDataSource"},{"attributes":{"axis_label":"Average Value of Measurement","formatter":{"id":"26472"},"ticker":{"id":"26446"}},"id":"26445","type":"LinearAxis"},{"attributes":{"source":{"id":"26463"}},"id":"26467","type":"CDSView"},{"attributes":{"axis":{"id":"26441"},"ticker":null},"id":"26444","type":"Grid"},{"attributes":{},"id":"26433","type":"DataRange1d"},{"attributes":{"axis":{"id":"26445"},"dimension":1,"ticker":null},"id":"26448","type":"Grid"},{"attributes":{},"id":"26475","type":"UnionRenderers"},{"attributes":{},"id":"26446","type":"BasicTicker"},{"attributes":{"data_source":{"id":"26463"},"glyph":{"id":"26464"},"hover_glyph":null,"muted_glyph":null,"nonselection_glyph":{"id":"26465"},"selection_glyph":null,"view":{"id":"26467"}},"id":"26466","type":"GlyphRenderer"},{"attributes":{},"id":"26450","type":"WheelZoomTool"},{"attributes":{"active_drag":"auto","active_inspect":"auto","active_multi":null,"active_scroll":"auto","active_tap":"auto","tools":[{"id":"26449"},{"id":"26450"},{"id":"26451"},{"id":"26452"},{"id":"26453"},{"id":"26454"}]},"id":"26456","type":"Toolbar"},{"attributes":{},"id":"26449","type":"PanTool"},{"attributes":{},"id":"26474","type":"Selection"},{"attributes":{"overlay":{"id":"26455"}},"id":"26451","type":"BoxZoomTool"},{"attributes":{},"id":"26435","type":"DataRange1d"},{"attributes":{},"id":"26452","type":"SaveTool"},{"attributes":{},"id":"26439","type":"LinearScale"},{"attributes":{"bottom_units":"screen","fill_alpha":0.5,"fill_color":"lightgrey","left_units":"screen","level":"overlay","line_alpha":1.0,"line_color":"black","line_dash":[4,4],"line_width":2,"right_units":"screen","top_units":"screen"},"id":"26455","type":"BoxAnnotation"},{"attributes":{},"id":"26453","type":"ResetTool"},{"attributes":{},"id":"26470","type":"BasicTickFormatter"},{"attributes":{"axis_label":"Hamming Weight of Intermediate Value","formatter":{"id":"26470"},"ticker":{"id":"26442"}},"id":"26441","type":"LinearAxis"},{"attributes":{},"id":"26442","type":"BasicTicker"},{"attributes":{"text":"HW vs Voltage Measurement"},"id":"26431","type":"Title"},{"attributes":{},"id":"26472","type":"BasicTickFormatter"},{"attributes":{},"id":"26437","type":"LinearScale"},{"attributes":{"line_color":"red","x":{"field":"x"},"y":{"field":"y"}},"id":"26464","type":"Line"}],"root_ids":["26430"]},"title":"Bokeh Application","version":"2.2.3"}}
+        </script>
+        <script type="text/javascript">
+          (function() {
+            var fn = function() {
+              Bokeh.safely(function() {
+                (function(root) {
+                  function embed_document(root) {
+                    
+                  var docs_json = document.getElementById('26548').textContent;
+                  var render_items = [{"docid":"c09c405f-a001-4b8d-a601-e80ca18aa06e","root_ids":["26430"],"roots":{"26430":"aa0fa5d9-b5fe-4bf0-9e31-9f62647fa55e"}}];
+                  root.Bokeh.embed.embed_items(docs_json, render_items);
+                
+                  }
+                  if (root.Bokeh !== undefined) {
+                    embed_document(root);
+                  } else {
+                    var attempts = 0;
+                    var timer = setInterval(function(root) {
+                      if (root.Bokeh !== undefined) {
+                        clearInterval(timer);
+                        embed_document(root);
+                      } else {
+                        attempts++;
+                        if (attempts > 100) {
+                          clearInterval(timer);
+                          console.log("Bokeh: ERROR: Unable to run BokehJS code because BokehJS library is missing");
+                        }
+                      }
+                    }, 10, root)
+                  }
+                })(window);
+              });
+            };
+            if (document.readyState != "loading") fn();
+            else document.addEventListener("DOMContentLoaded", fn);
+          })();
+        </script>
+    
+  </body>
+  
+</html>

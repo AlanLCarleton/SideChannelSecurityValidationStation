@@ -1,0 +1,306 @@
+   1               		.file	"uart.c"
+   2               	__SP_H__ = 0x3e
+   3               	__SP_L__ = 0x3d
+   4               	__SREG__ = 0x3f
+   5               	__RAMPZ__ = 0x3b
+   6               	__CCP__ = 0x34
+   7               	__tmp_reg__ = 0
+   8               	__zero_reg__ = 1
+   9               		.text
+  10               	.Ltext0:
+  11               		.cfi_sections	.debug_frame
+  12               	.global	init_uart0
+  14               	init_uart0:
+  15               	.LFB11:
+  16               		.file 1 ".././hal/xmega/uart.c"
+   1:.././hal/xmega/uart.c **** #include "uart.h"
+   2:.././hal/xmega/uart.c **** 
+   3:.././hal/xmega/uart.c **** /*! Define that selects the Usart used in example. */
+   4:.././hal/xmega/uart.c **** #define USART USARTC0
+   5:.././hal/xmega/uart.c **** 
+   6:.././hal/xmega/uart.c **** #define TIMEOUT 0
+   7:.././hal/xmega/uart.c **** #define BYTE_REC 1
+   8:.././hal/xmega/uart.c **** 
+   9:.././hal/xmega/uart.c **** void												init_uart0
+  10:.././hal/xmega/uart.c **** 	(
+  11:.././hal/xmega/uart.c ****    void
+  12:.././hal/xmega/uart.c ****    )
+  13:.././hal/xmega/uart.c ****    {
+  17               		.loc 1 13 4 view -0
+  18               		.cfi_startproc
+  19               	/* prologue: function */
+  20               	/* frame size = 0 */
+  21               	/* stack size = 0 */
+  22               	.L__stack_usage = 0
+  14:.././hal/xmega/uart.c **** /* This PORT setting is only valid to USARTC0 if other USARTs is used a
+  15:.././hal/xmega/uart.c **** 	 * different PORT and/or pins is used. */
+  16:.././hal/xmega/uart.c **** 	/* PIN3 (TXD0) as output. */
+  17:.././hal/xmega/uart.c **** 	PORTC.DIRSET = PIN3_bm;
+  23               		.loc 1 17 2 view .LVU1
+  24               		.loc 1 17 15 is_stmt 0 view .LVU2
+  25 0000 E0E4      		ldi r30,lo8(64)
+  26 0002 F6E0      		ldi r31,lo8(6)
+  27 0004 88E0      		ldi r24,lo8(8)
+  28 0006 8183      		std Z+1,r24
+  18:.././hal/xmega/uart.c **** 
+  19:.././hal/xmega/uart.c **** 	/* PC2 (RXD0) as input. */
+  20:.././hal/xmega/uart.c **** 	PORTC.DIRCLR = PIN2_bm;
+  29               		.loc 1 20 2 is_stmt 1 view .LVU3
+  30               		.loc 1 20 15 is_stmt 0 view .LVU4
+  31 0008 84E0      		ldi r24,lo8(4)
+  32 000a 8283      		std Z+2,r24
+  21:.././hal/xmega/uart.c **** 
+  22:.././hal/xmega/uart.c **** 	/* USARTC0, 8 Data bits, No Parity, 1 Stop bit. */
+  23:.././hal/xmega/uart.c **** 	USART_Format_Set(&USART, USART_CHSIZE_8BIT_gc, USART_PMODE_DISABLED_gc, false);
+  33               		.loc 1 23 2 is_stmt 1 view .LVU5
+  34 000c E0EA      		ldi r30,lo8(-96)
+  35 000e F8E0      		ldi r31,lo8(8)
+  36 0010 83E0      		ldi r24,lo8(3)
+  37 0012 8583      		std Z+5,r24
+  24:.././hal/xmega/uart.c **** 
+  25:.././hal/xmega/uart.c **** 	/* Set Baudrate to 9600 bps:
+  26:.././hal/xmega/uart.c **** 	 * Use the default I/O clock fequency that is 2 MHz.
+  27:.././hal/xmega/uart.c **** 	 * Do not use the baudrate scale factor
+  28:.././hal/xmega/uart.c **** 	 *
+  29:.././hal/xmega/uart.c **** 	 * Baudrate select = (1/(16*(((I/O clock frequency)/Baudrate)-1)
+  30:.././hal/xmega/uart.c **** 	 *                 = 12
+  31:.././hal/xmega/uart.c **** 	 */
+  32:.././hal/xmega/uart.c **** 	USART_Baudrate_Set(&USART, 11, 0);
+  38               		.loc 1 32 2 view .LVU6
+  39 0014 8BE0      		ldi r24,lo8(11)
+  40 0016 8683      		std Z+6,r24
+  41               		.loc 1 32 2 view .LVU7
+  42 0018 1782      		std Z+7,__zero_reg__
+  33:.././hal/xmega/uart.c **** 
+  34:.././hal/xmega/uart.c **** 	/* Enable both RX and TX. */
+  35:.././hal/xmega/uart.c **** 	USART_Rx_Enable(&USART);
+  43               		.loc 1 35 2 view .LVU8
+  44 001a 8481      		ldd r24,Z+4
+  45 001c 8061      		ori r24,lo8(16)
+  46 001e 8483      		std Z+4,r24
+  36:.././hal/xmega/uart.c **** 	USART_Tx_Enable(&USART);
+  47               		.loc 1 36 2 view .LVU9
+  48 0020 8481      		ldd r24,Z+4
+  49 0022 8860      		ori r24,lo8(8)
+  50 0024 8483      		std Z+4,r24
+  51               	/* epilogue start */
+  37:.././hal/xmega/uart.c ****    }
+  52               		.loc 1 37 4 is_stmt 0 view .LVU10
+  53 0026 0895      		ret
+  54               		.cfi_endproc
+  55               	.LFE11:
+  57               	.global	input_ch_w_timeout_0
+  59               	input_ch_w_timeout_0:
+  60               	.LVL0:
+  61               	.LFB12:
+  38:.././hal/xmega/uart.c **** 
+  39:.././hal/xmega/uart.c **** unsigned char									input_ch_w_timeout_0
+  40:.././hal/xmega/uart.c **** 	(
+  41:.././hal/xmega/uart.c ****    char *					 	data,
+  42:.././hal/xmega/uart.c ****    volatile unsigned int				timeout
+  43:.././hal/xmega/uart.c ****    )
+  44:.././hal/xmega/uart.c ****    {
+  62               		.loc 1 44 4 is_stmt 1 view -0
+  63               		.cfi_startproc
+  64               		.loc 1 44 4 is_stmt 0 view .LVU12
+  65 0028 CF93      		push r28
+  66               	.LCFI0:
+  67               		.cfi_def_cfa_offset 4
+  68               		.cfi_offset 28, -3
+  69 002a DF93      		push r29
+  70               	.LCFI1:
+  71               		.cfi_def_cfa_offset 5
+  72               		.cfi_offset 29, -4
+  73 002c 0F92      		push __tmp_reg__
+  74 002e 0F92      		push __tmp_reg__
+  75               	.LCFI2:
+  76               		.cfi_def_cfa_offset 7
+  77 0030 CDB7      		in r28,__SP_L__
+  78 0032 DEB7      		in r29,__SP_H__
+  79               	.LCFI3:
+  80               		.cfi_def_cfa_register 28
+  81               	/* prologue: function */
+  82               	/* frame size = 2 */
+  83               	/* stack size = 4 */
+  84               	.L__stack_usage = 4
+  85 0034 FC01      		movw r30,r24
+  86 0036 6983      		std Y+1,r22
+  87 0038 7A83      		std Y+2,r23
+  45:.././hal/xmega/uart.c ****    unsigned int				timeout_counter = 0;
+  88               		.loc 1 45 4 is_stmt 1 view .LVU13
+  89               	.LVL1:
+  46:.././hal/xmega/uart.c **** 
+  47:.././hal/xmega/uart.c ****    
+  48:.././hal/xmega/uart.c ****    //check if a byte has been recieved or if the timeout has been excedded
+  49:.././hal/xmega/uart.c ****    while (timeout_counter != timeout)
+  90               		.loc 1 49 4 view .LVU14
+  45:.././hal/xmega/uart.c ****    unsigned int				timeout_counter = 0;
+  91               		.loc 1 45 20 is_stmt 0 view .LVU15
+  92 003a 90E0      		ldi r25,0
+  93 003c 80E0      		ldi r24,0
+  94               	.LVL2:
+  95               	.L3:
+  96               		.loc 1 49 10 is_stmt 1 view .LVU16
+  97               		.loc 1 49 27 is_stmt 0 view .LVU17
+  98 003e 2981      		ldd r18,Y+1
+  99 0040 3A81      		ldd r19,Y+2
+ 100               		.loc 1 49 10 view .LVU18
+ 101 0042 2817      		cp r18,r24
+ 102 0044 3907      		cpc r19,r25
+ 103 0046 01F4      		brne .L6
+  50:.././hal/xmega/uart.c **** 		{	
+  51:.././hal/xmega/uart.c **** 		if (USART_IsRXComplete(&USART))
+  52:.././hal/xmega/uart.c **** 			{
+  53:.././hal/xmega/uart.c **** 			*data = USART_GetChar(&USART);
+  54:.././hal/xmega/uart.c **** 			return BYTE_REC;
+  55:.././hal/xmega/uart.c **** 			}
+  56:.././hal/xmega/uart.c **** 		timeout_counter++;
+  57:.././hal/xmega/uart.c **** 		}
+  58:.././hal/xmega/uart.c **** 		
+  59:.././hal/xmega/uart.c **** 	return TIMEOUT;
+ 104               		.loc 1 59 9 view .LVU19
+ 105 0048 80E0      		ldi r24,0
+ 106               	.LVL3:
+ 107               		.loc 1 59 9 view .LVU20
+ 108 004a 00C0      		rjmp .L2
+ 109               	.LVL4:
+ 110               	.L6:
+  51:.././hal/xmega/uart.c **** 			{
+ 111               		.loc 1 51 3 is_stmt 1 view .LVU21
+  51:.././hal/xmega/uart.c **** 			{
+ 112               		.loc 1 51 7 is_stmt 0 view .LVU22
+ 113 004c 2091 A108 		lds r18,2209
+  51:.././hal/xmega/uart.c **** 			{
+ 114               		.loc 1 51 6 view .LVU23
+ 115 0050 27FF      		sbrs r18,7
+ 116 0052 00C0      		rjmp .L4
+  53:.././hal/xmega/uart.c **** 			return BYTE_REC;
+ 117               		.loc 1 53 4 is_stmt 1 view .LVU24
+  53:.././hal/xmega/uart.c **** 			return BYTE_REC;
+ 118               		.loc 1 53 12 is_stmt 0 view .LVU25
+ 119 0054 8091 A008 		lds r24,2208
+ 120               	.LVL5:
+  53:.././hal/xmega/uart.c **** 			return BYTE_REC;
+ 121               		.loc 1 53 10 view .LVU26
+ 122 0058 8083      		st Z,r24
+  54:.././hal/xmega/uart.c **** 			}
+ 123               		.loc 1 54 4 is_stmt 1 view .LVU27
+  54:.././hal/xmega/uart.c **** 			}
+ 124               		.loc 1 54 11 is_stmt 0 view .LVU28
+ 125 005a 81E0      		ldi r24,lo8(1)
+ 126               	.L2:
+ 127               	/* epilogue start */
+  60:.././hal/xmega/uart.c **** 	}
+ 128               		.loc 1 60 2 view .LVU29
+ 129 005c 0F90      		pop __tmp_reg__
+ 130 005e 0F90      		pop __tmp_reg__
+ 131 0060 DF91      		pop r29
+ 132 0062 CF91      		pop r28
+ 133 0064 0895      		ret
+ 134               	.LVL6:
+ 135               	.L4:
+  56:.././hal/xmega/uart.c **** 		}
+ 136               		.loc 1 56 3 is_stmt 1 view .LVU30
+  56:.././hal/xmega/uart.c **** 		}
+ 137               		.loc 1 56 18 is_stmt 0 view .LVU31
+ 138 0066 0196      		adiw r24,1
+ 139               	.LVL7:
+  56:.././hal/xmega/uart.c **** 		}
+ 140               		.loc 1 56 18 view .LVU32
+ 141 0068 00C0      		rjmp .L3
+ 142               		.cfi_endproc
+ 143               	.LFE12:
+ 145               	.global	input_ch_0
+ 147               	input_ch_0:
+ 148               	.LFB13:
+  61:.././hal/xmega/uart.c **** 		
+  62:.././hal/xmega/uart.c **** char												input_ch_0
+  63:.././hal/xmega/uart.c **** 	(
+  64:.././hal/xmega/uart.c ****    void
+  65:.././hal/xmega/uart.c ****    )
+  66:.././hal/xmega/uart.c ****    {
+ 149               		.loc 1 66 4 is_stmt 1 view -0
+ 150               		.cfi_startproc
+ 151               	/* prologue: function */
+ 152               	/* frame size = 0 */
+ 153               	/* stack size = 0 */
+ 154               	.L__stack_usage = 0
+ 155               	.L8:
+  67:.././hal/xmega/uart.c ****    //check if a byte has been recieved or if the timeout has been excedded
+  68:.././hal/xmega/uart.c ****    while (!USART_IsRXComplete(&USART))
+ 156               		.loc 1 68 10 view .LVU34
+ 157               		.loc 1 68 12 is_stmt 0 view .LVU35
+ 158 006a 8091 A108 		lds r24,2209
+ 159               		.loc 1 68 10 view .LVU36
+ 160 006e 87FF      		sbrs r24,7
+ 161 0070 00C0      		rjmp .L8
+  69:.././hal/xmega/uart.c **** 		{
+  70:.././hal/xmega/uart.c **** 		continue;		
+  71:.././hal/xmega/uart.c **** 		}		
+  72:.././hal/xmega/uart.c **** 	return USART_GetChar(&USART);;
+ 162               		.loc 1 72 2 is_stmt 1 view .LVU37
+ 163               		.loc 1 72 9 is_stmt 0 view .LVU38
+ 164 0072 8091 A008 		lds r24,2208
+ 165               		.loc 1 72 31 is_stmt 1 view .LVU39
+ 166               	/* epilogue start */
+  73:.././hal/xmega/uart.c **** 	}
+ 167               		.loc 1 73 2 is_stmt 0 view .LVU40
+ 168 0076 0895      		ret
+ 169               		.cfi_endproc
+ 170               	.LFE13:
+ 172               	.global	output_ch_0
+ 174               	output_ch_0:
+ 175               	.LFB14:
+  74:.././hal/xmega/uart.c **** 	
+  75:.././hal/xmega/uart.c **** void												output_ch_0
+  76:.././hal/xmega/uart.c **** 	(
+  77:.././hal/xmega/uart.c **** 	char							data
+  78:.././hal/xmega/uart.c **** 	)
+  79:.././hal/xmega/uart.c **** 	{
+ 176               		.loc 1 79 2 is_stmt 1 view -0
+ 177               		.cfi_startproc
+ 178               	/* prologue: function */
+ 179               	/* frame size = 0 */
+ 180               	/* stack size = 0 */
+ 181               	.L__stack_usage = 0
+ 182               	.LVL8:
+ 183               	.L11:
+  80:.././hal/xmega/uart.c **** 	while(!USART_IsTXDataRegisterEmpty(&USART));
+ 184               		.loc 1 80 45 discriminator 1 view .LVU42
+ 185               		.loc 1 80 7 discriminator 1 view .LVU43
+ 186               		.loc 1 80 9 is_stmt 0 discriminator 1 view .LVU44
+ 187 0078 9091 A108 		lds r25,2209
+ 188               		.loc 1 80 7 discriminator 1 view .LVU45
+ 189 007c 95FF      		sbrs r25,5
+ 190 007e 00C0      		rjmp .L11
+  81:.././hal/xmega/uart.c **** 	USART_PutChar(&USART, data);
+ 191               		.loc 1 81 2 is_stmt 1 view .LVU46
+ 192 0080 8093 A008 		sts 2208,r24
+  82:.././hal/xmega/uart.c **** 	return;
+ 193               		.loc 1 82 2 view .LVU47
+ 194               	/* epilogue start */
+  83:.././hal/xmega/uart.c **** 	}...
+ 195               		.loc 1 83 2 is_stmt 0 view .LVU48
+ 196 0084 0895      		ret
+ 197               		.cfi_endproc
+ 198               	.LFE14:
+ 200               	.Letext0:
+ 201               		.file 2 "/usr/local/Cellar/avr-gcc/9.3.0/avr/include/stdint.h"
+ 202               		.file 3 "/usr/local/Cellar/avr-gcc/9.3.0/lib/avr-gcc/9/gcc/avr/9.3.0/include/stddef.h"
+ 203               		.file 4 "/usr/local/Cellar/avr-gcc/9.3.0/avr/include/stdlib.h"
+ 204               		.file 5 "/usr/local/Cellar/avr-gcc/9.3.0/avr/include/avr/iox128d3.h"
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 uart.c
+/var/folders/k6/th7ms_x56q93d_45_7qvs5nw0000gn/T//ccHFkncL.s:2      *ABS*:000000000000003e __SP_H__
+/var/folders/k6/th7ms_x56q93d_45_7qvs5nw0000gn/T//ccHFkncL.s:3      *ABS*:000000000000003d __SP_L__
+/var/folders/k6/th7ms_x56q93d_45_7qvs5nw0000gn/T//ccHFkncL.s:4      *ABS*:000000000000003f __SREG__
+/var/folders/k6/th7ms_x56q93d_45_7qvs5nw0000gn/T//ccHFkncL.s:5      *ABS*:000000000000003b __RAMPZ__
+/var/folders/k6/th7ms_x56q93d_45_7qvs5nw0000gn/T//ccHFkncL.s:6      *ABS*:0000000000000034 __CCP__
+/var/folders/k6/th7ms_x56q93d_45_7qvs5nw0000gn/T//ccHFkncL.s:7      *ABS*:0000000000000000 __tmp_reg__
+/var/folders/k6/th7ms_x56q93d_45_7qvs5nw0000gn/T//ccHFkncL.s:8      *ABS*:0000000000000001 __zero_reg__
+/var/folders/k6/th7ms_x56q93d_45_7qvs5nw0000gn/T//ccHFkncL.s:14     .text:0000000000000000 init_uart0
+/var/folders/k6/th7ms_x56q93d_45_7qvs5nw0000gn/T//ccHFkncL.s:59     .text:0000000000000028 input_ch_w_timeout_0
+/var/folders/k6/th7ms_x56q93d_45_7qvs5nw0000gn/T//ccHFkncL.s:147    .text:000000000000006a input_ch_0
+/var/folders/k6/th7ms_x56q93d_45_7qvs5nw0000gn/T//ccHFkncL.s:174    .text:0000000000000078 output_ch_0
+
+NO UNDEFINED SYMBOLS

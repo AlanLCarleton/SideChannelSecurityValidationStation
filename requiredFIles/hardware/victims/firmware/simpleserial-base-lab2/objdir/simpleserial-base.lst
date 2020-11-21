@@ -1,0 +1,241 @@
+   1               		.file	"simpleserial-base.c"
+   2               	__SP_H__ = 0x3e
+   3               	__SP_L__ = 0x3d
+   4               	__SREG__ = 0x3f
+   5               	__RAMPZ__ = 0x3b
+   6               	__CCP__ = 0x34
+   7               	__tmp_reg__ = 0
+   8               	__zero_reg__ = 1
+   9               		.text
+  10               	.Ltext0:
+  11               		.cfi_sections	.debug_frame
+  12               	.global	get_key
+  14               	get_key:
+  15               	.LVL0:
+  16               	.LFB11:
+  17               		.file 1 "simpleserial-base.c"
+   1:simpleserial-base.c **** /*
+   2:simpleserial-base.c ****     This file is part of the ChipWhisperer Example Targets
+   3:simpleserial-base.c ****     Copyright (C) 2012-2017 NewAE Technology Inc.
+   4:simpleserial-base.c **** 
+   5:simpleserial-base.c ****     This program is free software: you can redistribute it and/or modify
+   6:simpleserial-base.c ****     it under the terms of the GNU General Public License as published by
+   7:simpleserial-base.c ****     the Free Software Foundation, either version 3 of the License, or
+   8:simpleserial-base.c ****     (at your option) any later version.
+   9:simpleserial-base.c **** 
+  10:simpleserial-base.c ****     This program is distributed in the hope that it will be useful,
+  11:simpleserial-base.c ****     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  12:simpleserial-base.c ****     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  13:simpleserial-base.c ****     GNU General Public License for more details.
+  14:simpleserial-base.c **** 
+  15:simpleserial-base.c ****     You should have received a copy of the GNU General Public License
+  16:simpleserial-base.c ****     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  17:simpleserial-base.c **** */
+  18:simpleserial-base.c **** 
+  19:simpleserial-base.c **** #include "hal.h"
+  20:simpleserial-base.c **** #include <stdint.h>
+  21:simpleserial-base.c **** #include <stdlib.h>
+  22:simpleserial-base.c **** 
+  23:simpleserial-base.c **** #include "simpleserial.h"
+  24:simpleserial-base.c **** 
+  25:simpleserial-base.c **** uint8_t get_key(uint8_t* k)
+  26:simpleserial-base.c **** {
+  18               		.loc 1 26 1 view -0
+  19               		.cfi_startproc
+  20               	/* prologue: function */
+  21               	/* frame size = 0 */
+  22               	/* stack size = 0 */
+  23               	.L__stack_usage = 0
+  27:simpleserial-base.c **** 	// Load key here
+  28:simpleserial-base.c **** 	return 0x00;
+  24               		.loc 1 28 2 view .LVU1
+  29:simpleserial-base.c **** }
+  25               		.loc 1 29 1 is_stmt 0 view .LVU2
+  26 0000 80E0      		ldi r24,0
+  27               	.LVL1:
+  28               	/* epilogue start */
+  29               		.loc 1 29 1 view .LVU3
+  30 0002 0895      		ret
+  31               		.cfi_endproc
+  32               	.LFE11:
+  34               	.global	get_pt
+  36               	get_pt:
+  37               	.LVL2:
+  38               	.LFB12:
+  30:simpleserial-base.c **** 
+  31:simpleserial-base.c **** uint8_t get_pt(uint8_t* pt)
+  32:simpleserial-base.c **** {
+  39               		.loc 1 32 1 is_stmt 1 view -0
+  40               		.cfi_startproc
+  41               	/* prologue: function */
+  42               	/* frame size = 0 */
+  43               	/* stack size = 0 */
+  44               	.L__stack_usage = 0
+  45               		.loc 1 32 1 is_stmt 0 view .LVU5
+  46 0004 AC01      		movw r20,r24
+  33:simpleserial-base.c **** 	/**********************************
+  34:simpleserial-base.c **** 	* Start user-specific code here. */
+  35:simpleserial-base.c **** 	trigger_high();
+  47               		.loc 1 35 2 is_stmt 1 view .LVU6
+  48 0006 E0E0      		ldi r30,0
+  49 0008 F6E0      		ldi r31,lo8(6)
+  50 000a 81E0      		ldi r24,lo8(1)
+  51               	.LVL3:
+  52               		.loc 1 35 2 is_stmt 0 view .LVU7
+  53 000c 8583      		std Z+5,r24
+  36:simpleserial-base.c **** 	
+  37:simpleserial-base.c **** 	//16 hex bytes held in 'pt' were sent
+  38:simpleserial-base.c **** 	//from the computer. Store your response
+  39:simpleserial-base.c **** 	//back into 'pt', which will send 16 bytes
+  40:simpleserial-base.c **** 	//back to computer. Can ignore of course if
+  41:simpleserial-base.c **** 	//not needed
+  42:simpleserial-base.c **** 	
+  43:simpleserial-base.c **** 	trigger_low();
+  54               		.loc 1 43 2 is_stmt 1 view .LVU8
+  55 000e 8683      		std Z+6,r24
+  44:simpleserial-base.c **** 	/* End user-specific code here. *
+  45:simpleserial-base.c **** 	********************************/
+  46:simpleserial-base.c **** 	simpleserial_put('r', 16, pt);
+  56               		.loc 1 46 2 view .LVU9
+  57 0010 60E1      		ldi r22,lo8(16)
+  58 0012 70E0      		ldi r23,0
+  59 0014 82E7      		ldi r24,lo8(114)
+  60 0016 0E94 0000 		call simpleserial_put
+  61               	.LVL4:
+  47:simpleserial-base.c **** 	return 0x00;
+  62               		.loc 1 47 2 view .LVU10
+  48:simpleserial-base.c **** }
+  63               		.loc 1 48 1 is_stmt 0 view .LVU11
+  64 001a 80E0      		ldi r24,0
+  65               	/* epilogue start */
+  66 001c 0895      		ret
+  67               		.cfi_endproc
+  68               	.LFE12:
+  70               	.global	reset
+  72               	reset:
+  73               	.LFB16:
+  74               		.cfi_startproc
+  75               	/* prologue: function */
+  76               	/* frame size = 0 */
+  77               	/* stack size = 0 */
+  78               	.L__stack_usage = 0
+  79 001e 80E0      		ldi r24,0
+  80               	/* epilogue start */
+  81 0020 0895      		ret
+  82               		.cfi_endproc
+  83               	.LFE16:
+  85               		.section	.text.startup,"ax",@progbits
+  86               	.global	main
+  88               	main:
+  89               	.LFB14:
+  49:simpleserial-base.c **** 
+  50:simpleserial-base.c **** uint8_t reset(uint8_t* x)
+  51:simpleserial-base.c **** {
+  52:simpleserial-base.c **** 	// Reset key here if needed
+  53:simpleserial-base.c **** 	return 0x00;
+  54:simpleserial-base.c **** }
+  55:simpleserial-base.c **** 
+  56:simpleserial-base.c **** int main(void)
+  57:simpleserial-base.c **** {
+  90               		.loc 1 57 1 is_stmt 1 view -0
+  91               		.cfi_startproc
+  92               	/* prologue: function */
+  93               	/* frame size = 0 */
+  94               	/* stack size = 0 */
+  95               	.L__stack_usage = 0
+  58:simpleserial-base.c ****     platform_init();
+  96               		.loc 1 58 5 view .LVU13
+  97 0000 0E94 0000 		call platform_init
+  98               	.LVL5:
+  59:simpleserial-base.c **** 	init_uart();	
+  99               		.loc 1 59 2 view .LVU14
+ 100 0004 0E94 0000 		call init_uart0
+ 101               	.LVL6:
+  60:simpleserial-base.c **** 	trigger_setup();
+ 102               		.loc 1 60 2 view .LVU15
+ 103 0008 81E0      		ldi r24,lo8(1)
+ 104 000a 8093 0106 		sts 1537,r24
+  61:simpleserial-base.c **** 	
+  62:simpleserial-base.c ****  	/* Uncomment this to get a HELLO message for debug */
+  63:simpleserial-base.c **** 	/*
+  64:simpleserial-base.c **** 	putch('h');
+  65:simpleserial-base.c **** 	putch('e');
+  66:simpleserial-base.c **** 	putch('l');
+  67:simpleserial-base.c **** 	putch('l');
+  68:simpleserial-base.c **** 	putch('o');
+  69:simpleserial-base.c **** 	putch('\n');
+  70:simpleserial-base.c **** 	*/
+  71:simpleserial-base.c **** 		
+  72:simpleserial-base.c **** 	simpleserial_init();		
+ 105               		.loc 1 72 2 view .LVU16
+ 106 000e 0E94 0000 		call simpleserial_init
+ 107               	.LVL7:
+  73:simpleserial-base.c **** 	simpleserial_addcmd('k', 16, get_key);
+ 108               		.loc 1 73 2 view .LVU17
+ 109 0012 40E0      		ldi r20,lo8(gs(get_key))
+ 110 0014 50E0      		ldi r21,hi8(gs(get_key))
+ 111 0016 60E1      		ldi r22,lo8(16)
+ 112 0018 70E0      		ldi r23,0
+ 113 001a 8BE6      		ldi r24,lo8(107)
+ 114 001c 0E94 0000 		call simpleserial_addcmd
+ 115               	.LVL8:
+  74:simpleserial-base.c **** 	simpleserial_addcmd('p', 16, get_pt);
+ 116               		.loc 1 74 2 view .LVU18
+ 117 0020 40E0      		ldi r20,lo8(gs(get_pt))
+ 118 0022 50E0      		ldi r21,hi8(gs(get_pt))
+ 119 0024 60E1      		ldi r22,lo8(16)
+ 120 0026 70E0      		ldi r23,0
+ 121 0028 80E7      		ldi r24,lo8(112)
+ 122 002a 0E94 0000 		call simpleserial_addcmd
+ 123               	.LVL9:
+  75:simpleserial-base.c **** 	simpleserial_addcmd('x', 0, reset);
+ 124               		.loc 1 75 2 view .LVU19
+ 125 002e 40E0      		ldi r20,lo8(gs(reset))
+ 126 0030 50E0      		ldi r21,hi8(gs(reset))
+ 127 0032 70E0      		ldi r23,0
+ 128 0034 60E0      		ldi r22,0
+ 129 0036 88E7      		ldi r24,lo8(120)
+ 130 0038 0E94 0000 		call simpleserial_addcmd
+ 131               	.LVL10:
+ 132               	.L5:
+  76:simpleserial-base.c **** 	while(1)
+ 133               		.loc 1 76 2 discriminator 1 view .LVU20
+  77:simpleserial-base.c **** 		simpleserial_get();
+ 134               		.loc 1 77 3 discriminator 1 view .LVU21
+ 135 003c 0E94 0000 		call simpleserial_get
+ 136               	.LVL11:
+  76:simpleserial-base.c **** 	while(1)
+ 137               		.loc 1 76 7 discriminator 1 view .LVU22
+ 138 0040 00C0      		rjmp .L5
+ 139               		.cfi_endproc
+ 140               	.LFE14:
+ 142               		.text
+ 143               	.Letext0:
+ 144               		.file 2 "/usr/local/Cellar/avr-gcc/9.3.0/avr/include/stdint.h"
+ 145               		.file 3 "/usr/local/Cellar/avr-gcc/9.3.0/avr/include/avr/iox128d3.h"
+ 146               		.file 4 "/usr/local/Cellar/avr-gcc/9.3.0/lib/avr-gcc/9/gcc/avr/9.3.0/include/stddef.h"
+ 147               		.file 5 "/usr/local/Cellar/avr-gcc/9.3.0/avr/include/stdlib.h"
+ 148               		.file 6 ".././hal/hal.h"
+ 149               		.file 7 ".././hal/xmega/uart.h"
+ 150               		.file 8 ".././simpleserial/simpleserial.h"
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 simpleserial-base.c
+/var/folders/k6/th7ms_x56q93d_45_7qvs5nw0000gn/T//ccFzfAZe.s:2      *ABS*:000000000000003e __SP_H__
+/var/folders/k6/th7ms_x56q93d_45_7qvs5nw0000gn/T//ccFzfAZe.s:3      *ABS*:000000000000003d __SP_L__
+/var/folders/k6/th7ms_x56q93d_45_7qvs5nw0000gn/T//ccFzfAZe.s:4      *ABS*:000000000000003f __SREG__
+/var/folders/k6/th7ms_x56q93d_45_7qvs5nw0000gn/T//ccFzfAZe.s:5      *ABS*:000000000000003b __RAMPZ__
+/var/folders/k6/th7ms_x56q93d_45_7qvs5nw0000gn/T//ccFzfAZe.s:6      *ABS*:0000000000000034 __CCP__
+/var/folders/k6/th7ms_x56q93d_45_7qvs5nw0000gn/T//ccFzfAZe.s:7      *ABS*:0000000000000000 __tmp_reg__
+/var/folders/k6/th7ms_x56q93d_45_7qvs5nw0000gn/T//ccFzfAZe.s:8      *ABS*:0000000000000001 __zero_reg__
+/var/folders/k6/th7ms_x56q93d_45_7qvs5nw0000gn/T//ccFzfAZe.s:14     .text:0000000000000000 get_key
+/var/folders/k6/th7ms_x56q93d_45_7qvs5nw0000gn/T//ccFzfAZe.s:36     .text:0000000000000004 get_pt
+/var/folders/k6/th7ms_x56q93d_45_7qvs5nw0000gn/T//ccFzfAZe.s:72     .text:000000000000001e reset
+/var/folders/k6/th7ms_x56q93d_45_7qvs5nw0000gn/T//ccFzfAZe.s:88     .text.startup:0000000000000000 main
+
+UNDEFINED SYMBOLS
+simpleserial_put
+platform_init
+init_uart0
+simpleserial_init
+simpleserial_addcmd
+simpleserial_get
