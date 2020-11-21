@@ -1,0 +1,320 @@
+   1               		.file	"aes-independant.c"
+   2               	__SP_H__ = 0x3e
+   3               	__SP_L__ = 0x3d
+   4               	__SREG__ = 0x3f
+   5               	__RAMPZ__ = 0x3b
+   6               	__CCP__ = 0x34
+   7               	__tmp_reg__ = 0
+   8               	__zero_reg__ = 1
+   9               		.text
+  10               	.Ltext0:
+  11               		.cfi_sections	.debug_frame
+  12               	.global	aes_indep_init
+  14               	aes_indep_init:
+  15               	.LFB11:
+  16               		.file 1 ".././crypto/aes-independant.c"
+   1:.././crypto/aes-independant.c **** /*
+   2:.././crypto/aes-independant.c ****     This file is part of the AESExplorer Example Targets
+   3:.././crypto/aes-independant.c ****     Copyright (C) 2012 Colin O'Flynn <coflynn@newae.com>
+   4:.././crypto/aes-independant.c **** 
+   5:.././crypto/aes-independant.c ****     This program is free software: you can redistribute it and/or modify
+   6:.././crypto/aes-independant.c ****     it under the terms of the GNU General Public License as published by
+   7:.././crypto/aes-independant.c ****     the Free Software Foundation, either version 3 of the License, or
+   8:.././crypto/aes-independant.c ****     (at your option) any later version.
+   9:.././crypto/aes-independant.c **** 
+  10:.././crypto/aes-independant.c ****     This program is distributed in the hope that it will be useful,
+  11:.././crypto/aes-independant.c ****     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  12:.././crypto/aes-independant.c ****     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  13:.././crypto/aes-independant.c ****     GNU General Public License for more details.
+  14:.././crypto/aes-independant.c **** 
+  15:.././crypto/aes-independant.c ****     You should have received a copy of the GNU General Public License
+  16:.././crypto/aes-independant.c ****     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  17:.././crypto/aes-independant.c **** */
+  18:.././crypto/aes-independant.c **** 
+  19:.././crypto/aes-independant.c **** #include "aes-independant.h"
+  20:.././crypto/aes-independant.c **** #include "hal.h"
+  21:.././crypto/aes-independant.c **** 
+  22:.././crypto/aes-independant.c **** #if HWCRYPTO
+  23:.././crypto/aes-independant.c **** 
+  24:.././crypto/aes-independant.c **** void aes_indep_init(void)
+  25:.././crypto/aes-independant.c **** {
+  26:.././crypto/aes-independant.c ****     HW_AES128_Init();
+  27:.././crypto/aes-independant.c **** }
+  28:.././crypto/aes-independant.c **** 
+  29:.././crypto/aes-independant.c **** void aes_indep_key(uint8_t * key)
+  30:.././crypto/aes-independant.c **** {
+  31:.././crypto/aes-independant.c ****     HW_AES128_LoadKey(key);
+  32:.././crypto/aes-independant.c **** }
+  33:.././crypto/aes-independant.c **** 
+  34:.././crypto/aes-independant.c **** void aes_indep_enc_pretrigger(uint8_t * pt)
+  35:.././crypto/aes-independant.c **** {
+  36:.././crypto/aes-independant.c ****     HW_AES128_Enc_pretrigger(pt);
+  37:.././crypto/aes-independant.c **** }
+  38:.././crypto/aes-independant.c **** 
+  39:.././crypto/aes-independant.c **** void aes_indep_enc_posttrigger(uint8_t * pt)
+  40:.././crypto/aes-independant.c **** {
+  41:.././crypto/aes-independant.c ****     HW_AES128_Enc_posttrigger(pt);
+  42:.././crypto/aes-independant.c **** }
+  43:.././crypto/aes-independant.c **** 
+  44:.././crypto/aes-independant.c **** void aes_indep_enc(uint8_t * pt)
+  45:.././crypto/aes-independant.c **** {
+  46:.././crypto/aes-independant.c ****     HW_AES128_Enc(pt);
+  47:.././crypto/aes-independant.c **** }
+  48:.././crypto/aes-independant.c **** 
+  49:.././crypto/aes-independant.c **** void aes_indep_mask(uint8_t * m)
+  50:.././crypto/aes-independant.c **** {
+  51:.././crypto/aes-independant.c **** }
+  52:.././crypto/aes-independant.c **** 
+  53:.././crypto/aes-independant.c **** #elif defined(AVRCRYPTOLIB)
+  54:.././crypto/aes-independant.c **** #include "aes128_enc.h"
+  55:.././crypto/aes-independant.c **** #include "aes_keyschedule.h"
+  56:.././crypto/aes-independant.c **** 
+  57:.././crypto/aes-independant.c **** aes128_ctx_t ctx;
+  58:.././crypto/aes-independant.c **** 
+  59:.././crypto/aes-independant.c **** void aes_indep_init(void)
+  60:.././crypto/aes-independant.c **** {
+  61:.././crypto/aes-independant.c **** 	;
+  62:.././crypto/aes-independant.c **** }
+  63:.././crypto/aes-independant.c **** 
+  64:.././crypto/aes-independant.c **** void aes_indep_key(uint8_t * key)
+  65:.././crypto/aes-independant.c **** {
+  66:.././crypto/aes-independant.c **** 	aes128_init(key, &ctx);
+  67:.././crypto/aes-independant.c **** }
+  68:.././crypto/aes-independant.c **** 
+  69:.././crypto/aes-independant.c **** void aes_indep_enc(uint8_t * pt)
+  70:.././crypto/aes-independant.c **** {
+  71:.././crypto/aes-independant.c **** 	aes128_enc(pt, &ctx); /* encrypting the data block */
+  72:.././crypto/aes-independant.c **** }
+  73:.././crypto/aes-independant.c **** 
+  74:.././crypto/aes-independant.c **** void aes_indep_enc_pretrigger(uint8_t * pt)
+  75:.././crypto/aes-independant.c **** {
+  76:.././crypto/aes-independant.c ****     ;
+  77:.././crypto/aes-independant.c **** }
+  78:.././crypto/aes-independant.c **** 
+  79:.././crypto/aes-independant.c **** void aes_indep_enc_posttrigger(uint8_t * pt)
+  80:.././crypto/aes-independant.c **** {
+  81:.././crypto/aes-independant.c ****     ;
+  82:.././crypto/aes-independant.c **** }
+  83:.././crypto/aes-independant.c **** 
+  84:.././crypto/aes-independant.c **** void aes_indep_mask(uint8_t * m)
+  85:.././crypto/aes-independant.c **** {
+  86:.././crypto/aes-independant.c **** }
+  87:.././crypto/aes-independant.c **** 
+  88:.././crypto/aes-independant.c **** #elif defined(SIMPLEAES)
+  89:.././crypto/aes-independant.c **** 
+  90:.././crypto/aes-independant.c **** uint8_t enckey[16];
+  91:.././crypto/aes-independant.c **** 
+  92:.././crypto/aes-independant.c **** void aes_indep_init(void)
+  93:.././crypto/aes-independant.c **** {
+  94:.././crypto/aes-independant.c **** 	;
+  95:.././crypto/aes-independant.c **** }
+  96:.././crypto/aes-independant.c **** 
+  97:.././crypto/aes-independant.c **** void aes_indep_key(uint8_t * key)
+  98:.././crypto/aes-independant.c **** {
+  99:.././crypto/aes-independant.c **** 	for(uint8_t i=0; i < 16; i++){
+ 100:.././crypto/aes-independant.c **** 		enckey[i] = key[i];
+ 101:.././crypto/aes-independant.c **** 	}
+ 102:.././crypto/aes-independant.c **** }
+ 103:.././crypto/aes-independant.c **** 
+ 104:.././crypto/aes-independant.c **** void aes_indep_enc(uint8_t * pt)
+ 105:.././crypto/aes-independant.c **** {
+ 106:.././crypto/aes-independant.c **** 	uint8_t * result = aes(pt, enckey);
+ 107:.././crypto/aes-independant.c **** 	for(uint8_t i=0; i < 16; i++){
+ 108:.././crypto/aes-independant.c **** 		pt[i] = result[i];
+ 109:.././crypto/aes-independant.c **** 	}
+ 110:.././crypto/aes-independant.c **** }
+ 111:.././crypto/aes-independant.c **** 
+ 112:.././crypto/aes-independant.c **** void aes_indep_enc_pretrigger(uint8_t * pt)
+ 113:.././crypto/aes-independant.c **** {
+ 114:.././crypto/aes-independant.c ****     ;
+ 115:.././crypto/aes-independant.c **** }
+ 116:.././crypto/aes-independant.c **** 
+ 117:.././crypto/aes-independant.c **** void aes_indep_enc_posttrigger(uint8_t * pt)
+ 118:.././crypto/aes-independant.c **** {
+ 119:.././crypto/aes-independant.c ****     ;
+ 120:.././crypto/aes-independant.c **** }
+ 121:.././crypto/aes-independant.c **** 
+ 122:.././crypto/aes-independant.c **** void aes_indep_mask(uint8_t * m)
+ 123:.././crypto/aes-independant.c **** {
+ 124:.././crypto/aes-independant.c **** }
+ 125:.././crypto/aes-independant.c **** 
+ 126:.././crypto/aes-independant.c **** #elif defined(DPAV4)
+ 127:.././crypto/aes-independant.c **** 
+ 128:.././crypto/aes-independant.c **** #include "aes.h"
+ 129:.././crypto/aes-independant.c **** #include "aes_enc.h"
+ 130:.././crypto/aes-independant.c **** 
+ 131:.././crypto/aes-independant.c **** /*  This is the AES RSM 256 encryption function that call the generic AES RSM encryption core*/
+ 132:.././crypto/aes-independant.c **** void aes256_enc(uint8_t* j, void* buffer, aes256_ctx_t* ctx,uint8_t rng){
+ 133:.././crypto/aes-independant.c **** 	aes_encrypt_core(j,buffer, (aes_genctx_t*)ctx, 14,(uint8_t)rng);
+ 134:.././crypto/aes-independant.c **** }
+ 135:.././crypto/aes-independant.c **** 
+ 136:.././crypto/aes-independant.c **** aes256_ctx_t ctx;
+ 137:.././crypto/aes-independant.c **** 
+ 138:.././crypto/aes-independant.c **** void aes_indep_init(void)
+ 139:.././crypto/aes-independant.c **** {
+ 140:.././crypto/aes-independant.c ****     ;
+ 141:.././crypto/aes-independant.c **** }
+ 142:.././crypto/aes-independant.c **** 
+ 143:.././crypto/aes-independant.c **** void aes_indep_key(uint8_t * key)
+ 144:.././crypto/aes-independant.c **** {
+ 145:.././crypto/aes-independant.c **** 	aes256_init(key, &ctx);
+ 146:.././crypto/aes-independant.c **** }
+ 147:.././crypto/aes-independant.c **** 
+ 148:.././crypto/aes-independant.c **** void aes_indep_enc(uint8_t * pt)
+ 149:.././crypto/aes-independant.c **** {
+ 150:.././crypto/aes-independant.c **** 	static uint8_t j[0];
+ 151:.././crypto/aes-independant.c **** 
+ 152:.././crypto/aes-independant.c **** 	//Encryption with trigger enabled
+ 153:.././crypto/aes-independant.c **** 	aes256_enc(j, pt, &ctx, 1);
+ 154:.././crypto/aes-independant.c **** }
+ 155:.././crypto/aes-independant.c **** 
+ 156:.././crypto/aes-independant.c **** void aes_indep_enc_pretrigger(uint8_t * pt)
+ 157:.././crypto/aes-independant.c **** {
+ 158:.././crypto/aes-independant.c ****     ;
+ 159:.././crypto/aes-independant.c **** }
+ 160:.././crypto/aes-independant.c **** 
+ 161:.././crypto/aes-independant.c **** void aes_indep_enc_posttrigger(uint8_t * pt)
+ 162:.././crypto/aes-independant.c **** {
+ 163:.././crypto/aes-independant.c ****     ;
+ 164:.././crypto/aes-independant.c **** }
+ 165:.././crypto/aes-independant.c **** 
+ 166:.././crypto/aes-independant.c **** void aes_indep_mask(uint8_t * m)
+ 167:.././crypto/aes-independant.c **** {
+ 168:.././crypto/aes-independant.c **** }
+ 169:.././crypto/aes-independant.c **** 
+ 170:.././crypto/aes-independant.c **** #elif defined(TINYAES128C)
+ 171:.././crypto/aes-independant.c **** 
+ 172:.././crypto/aes-independant.c **** #include "aes.h"
+ 173:.././crypto/aes-independant.c **** 
+ 174:.././crypto/aes-independant.c **** uint8_t enckey[16];
+ 175:.././crypto/aes-independant.c **** 
+ 176:.././crypto/aes-independant.c **** void aes_indep_init(void)
+ 177:.././crypto/aes-independant.c **** {
+  17               		.loc 1 177 1 view -0
+  18               		.cfi_startproc
+  19               	/* prologue: function */
+  20               	/* frame size = 0 */
+  21               	/* stack size = 0 */
+  22               	.L__stack_usage = 0
+ 178:.././crypto/aes-independant.c **** 	;
+  23               		.loc 1 178 2 view .LVU1
+  24               	/* epilogue start */
+ 179:.././crypto/aes-independant.c **** }
+  25               		.loc 1 179 1 is_stmt 0 view .LVU2
+  26 0000 0895      		ret
+  27               		.cfi_endproc
+  28               	.LFE11:
+  30               	.global	aes_indep_key
+  32               	aes_indep_key:
+  33               	.LVL0:
+  34               	.LFB12:
+ 180:.././crypto/aes-independant.c **** 
+ 181:.././crypto/aes-independant.c **** void aes_indep_key(uint8_t * key)
+ 182:.././crypto/aes-independant.c **** {
+  35               		.loc 1 182 1 is_stmt 1 view -0
+  36               		.cfi_startproc
+  37               	/* prologue: function */
+  38               	/* frame size = 0 */
+  39               	/* stack size = 0 */
+  40               	.L__stack_usage = 0
+ 183:.././crypto/aes-independant.c ****     AES128_ECB_indp_setkey(key);
+  41               		.loc 1 183 5 view .LVU4
+  42 0002 0C94 0000 		jmp AES128_ECB_indp_setkey
+  43               	.LVL1:
+  44               		.loc 1 183 5 is_stmt 0 view .LVU5
+  45               		.cfi_endproc
+  46               	.LFE12:
+  48               	.global	aes_indep_enc
+  50               	aes_indep_enc:
+  51               	.LVL2:
+  52               	.LFB13:
+ 184:.././crypto/aes-independant.c **** }
+ 185:.././crypto/aes-independant.c **** 
+ 186:.././crypto/aes-independant.c **** void aes_indep_enc(uint8_t * pt)
+ 187:.././crypto/aes-independant.c **** {
+  53               		.loc 1 187 1 is_stmt 1 view -0
+  54               		.cfi_startproc
+  55               	/* prologue: function */
+  56               	/* frame size = 0 */
+  57               	/* stack size = 0 */
+  58               	.L__stack_usage = 0
+ 188:.././crypto/aes-independant.c **** 	AES128_ECB_indp_crypto(pt);
+  59               		.loc 1 188 2 view .LVU7
+  60 0006 0C94 0000 		jmp AES128_ECB_indp_crypto
+  61               	.LVL3:
+  62               		.loc 1 188 2 is_stmt 0 view .LVU8
+  63               		.cfi_endproc
+  64               	.LFE13:
+  66               	.global	aes_indep_enc_pretrigger
+  68               	aes_indep_enc_pretrigger:
+  69               	.LVL4:
+  70               	.LFB14:
+ 189:.././crypto/aes-independant.c **** }
+ 190:.././crypto/aes-independant.c **** 
+ 191:.././crypto/aes-independant.c **** void aes_indep_enc_pretrigger(uint8_t * pt)
+ 192:.././crypto/aes-independant.c **** {
+  71               		.loc 1 192 1 is_stmt 1 view -0
+  72               		.cfi_startproc
+  73               	/* prologue: function */
+  74               	/* frame size = 0 */
+  75               	/* stack size = 0 */
+  76               	.L__stack_usage = 0
+ 193:.././crypto/aes-independant.c ****     ;
+  77               		.loc 1 193 5 view .LVU10
+  78               	/* epilogue start */
+ 194:.././crypto/aes-independant.c **** }
+  79               		.loc 1 194 1 is_stmt 0 view .LVU11
+  80 000a 0895      		ret
+  81               		.cfi_endproc
+  82               	.LFE14:
+  84               	.global	aes_indep_enc_posttrigger
+  86               	aes_indep_enc_posttrigger:
+  87               	.LFB18:
+  88               		.cfi_startproc
+  89               	/* prologue: function */
+  90               	/* frame size = 0 */
+  91               	/* stack size = 0 */
+  92               	.L__stack_usage = 0
+  93               	/* epilogue start */
+  94 000c 0895      		ret
+  95               		.cfi_endproc
+  96               	.LFE18:
+  98               	.global	aes_indep_mask
+ 100               	aes_indep_mask:
+ 101               	.LFB20:
+ 102               		.cfi_startproc
+ 103               	/* prologue: function */
+ 104               	/* frame size = 0 */
+ 105               	/* stack size = 0 */
+ 106               	.L__stack_usage = 0
+ 107               	/* epilogue start */
+ 108 000e 0895      		ret
+ 109               		.cfi_endproc
+ 110               	.LFE20:
+ 112               		.comm	enckey,16,1
+ 113               	.Letext0:
+ 114               		.file 2 "/usr/local/Cellar/avr-gcc/9.3.0/avr/include/stdint.h"
+ 115               		.file 3 "/usr/local/Cellar/avr-gcc/9.3.0/lib/avr-gcc/9/gcc/avr/9.3.0/include/stddef.h"
+ 116               		.file 4 "/usr/local/Cellar/avr-gcc/9.3.0/avr/include/stdlib.h"
+ 117               		.file 5 ".././crypto/tiny-AES128-C/aes.h"
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 aes-independant.c
+/var/folders/k6/th7ms_x56q93d_45_7qvs5nw0000gn/T//ccahQLPo.s:2      *ABS*:000000000000003e __SP_H__
+/var/folders/k6/th7ms_x56q93d_45_7qvs5nw0000gn/T//ccahQLPo.s:3      *ABS*:000000000000003d __SP_L__
+/var/folders/k6/th7ms_x56q93d_45_7qvs5nw0000gn/T//ccahQLPo.s:4      *ABS*:000000000000003f __SREG__
+/var/folders/k6/th7ms_x56q93d_45_7qvs5nw0000gn/T//ccahQLPo.s:5      *ABS*:000000000000003b __RAMPZ__
+/var/folders/k6/th7ms_x56q93d_45_7qvs5nw0000gn/T//ccahQLPo.s:6      *ABS*:0000000000000034 __CCP__
+/var/folders/k6/th7ms_x56q93d_45_7qvs5nw0000gn/T//ccahQLPo.s:7      *ABS*:0000000000000000 __tmp_reg__
+/var/folders/k6/th7ms_x56q93d_45_7qvs5nw0000gn/T//ccahQLPo.s:8      *ABS*:0000000000000001 __zero_reg__
+/var/folders/k6/th7ms_x56q93d_45_7qvs5nw0000gn/T//ccahQLPo.s:14     .text:0000000000000000 aes_indep_init
+/var/folders/k6/th7ms_x56q93d_45_7qvs5nw0000gn/T//ccahQLPo.s:32     .text:0000000000000002 aes_indep_key
+/var/folders/k6/th7ms_x56q93d_45_7qvs5nw0000gn/T//ccahQLPo.s:50     .text:0000000000000006 aes_indep_enc
+/var/folders/k6/th7ms_x56q93d_45_7qvs5nw0000gn/T//ccahQLPo.s:68     .text:000000000000000a aes_indep_enc_pretrigger
+/var/folders/k6/th7ms_x56q93d_45_7qvs5nw0000gn/T//ccahQLPo.s:86     .text:000000000000000c aes_indep_enc_posttrigger
+/var/folders/k6/th7ms_x56q93d_45_7qvs5nw0000gn/T//ccahQLPo.s:100    .text:000000000000000e aes_indep_mask
+                            *COM*:0000000000000010 enckey
+
+UNDEFINED SYMBOLS
+AES128_ECB_indp_setkey
+AES128_ECB_indp_crypto
+__do_clear_bss

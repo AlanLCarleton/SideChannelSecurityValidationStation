@@ -1,0 +1,116 @@
+   1               		.file	"xmega_hal.c"
+   2               	__SP_H__ = 0x3e
+   3               	__SP_L__ = 0x3d
+   4               	__SREG__ = 0x3f
+   5               	__RAMPZ__ = 0x3b
+   6               	__CCP__ = 0x34
+   7               	__tmp_reg__ = 0
+   8               	__zero_reg__ = 1
+   9               		.text
+  10               	.Ltext0:
+  11               		.cfi_sections	.debug_frame
+  12               	.global	platform_init
+  14               	platform_init:
+  15               	.LFB11:
+  16               		.file 1 ".././hal/xmega/xmega_hal.c"
+   1:.././hal/xmega/xmega_hal.c **** /*
+   2:.././hal/xmega/xmega_hal.c ****     This file is part of the ChipWhisperer Example Targets
+   3:.././hal/xmega/xmega_hal.c ****     Copyright (C) 2012-2015 NewAE Technology Inc.
+   4:.././hal/xmega/xmega_hal.c **** 
+   5:.././hal/xmega/xmega_hal.c ****     This program is free software: you can redistribute it and/or modify
+   6:.././hal/xmega/xmega_hal.c ****     it under the terms of the GNU General Public License as published by
+   7:.././hal/xmega/xmega_hal.c ****     the Free Software Foundation, either version 3 of the License, or
+   8:.././hal/xmega/xmega_hal.c ****     (at your option) any later version.
+   9:.././hal/xmega/xmega_hal.c **** 
+  10:.././hal/xmega/xmega_hal.c ****     This program is distributed in the hope that it will be useful,
+  11:.././hal/xmega/xmega_hal.c ****     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  12:.././hal/xmega/xmega_hal.c ****     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  13:.././hal/xmega/xmega_hal.c ****     GNU General Public License for more details.
+  14:.././hal/xmega/xmega_hal.c **** 
+  15:.././hal/xmega/xmega_hal.c ****     You should have received a copy of the GNU General Public License
+  16:.././hal/xmega/xmega_hal.c ****     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  17:.././hal/xmega/xmega_hal.c **** */
+  18:.././hal/xmega/xmega_hal.c **** #include "hal.h"
+  19:.././hal/xmega/xmega_hal.c **** #include "xmega_hal.h"
+  20:.././hal/xmega/xmega_hal.c **** 
+  21:.././hal/xmega/xmega_hal.c **** void platform_init(void)
+  22:.././hal/xmega/xmega_hal.c **** {  
+  17               		.loc 1 22 1 view -0
+  18               		.cfi_startproc
+  19               	/* prologue: function */
+  20               	/* frame size = 0 */
+  21               	/* stack size = 0 */
+  22               	.L__stack_usage = 0
+  23:.././hal/xmega/xmega_hal.c ****     OSC.XOSCCTRL = 0x00;
+  23               		.loc 1 23 5 view .LVU1
+  24               		.loc 1 23 18 is_stmt 0 view .LVU2
+  25 0000 1092 5200 		sts 82,__zero_reg__
+  24:.././hal/xmega/xmega_hal.c ****     OSC.PLLCTRL = 0x00;
+  26               		.loc 1 24 5 is_stmt 1 view .LVU3
+  27               		.loc 1 24 17 is_stmt 0 view .LVU4
+  28 0004 1092 5500 		sts 85,__zero_reg__
+  25:.././hal/xmega/xmega_hal.c ****     OSC.CTRL |= OSC_XOSCEN_bm;
+  29               		.loc 1 25 5 is_stmt 1 view .LVU5
+  30               		.loc 1 25 14 is_stmt 0 view .LVU6
+  31 0008 8091 5000 		lds r24,80
+  32 000c 8860      		ori r24,lo8(8)
+  33 000e 8093 5000 		sts 80,r24
+  26:.././hal/xmega/xmega_hal.c ****     
+  27:.././hal/xmega/xmega_hal.c ****     //wait for clock
+  28:.././hal/xmega/xmega_hal.c ****     while((OSC.STATUS & OSC_XOSCRDY_bm) == 0);
+  34               		.loc 1 28 5 is_stmt 1 view .LVU7
+  35               	.L2:
+  36               		.loc 1 28 46 discriminator 1 view .LVU8
+  37               		.loc 1 28 10 discriminator 1 view .LVU9
+  38               		.loc 1 28 15 is_stmt 0 discriminator 1 view .LVU10
+  39 0012 8091 5100 		lds r24,81
+  40               		.loc 1 28 10 discriminator 1 view .LVU11
+  41 0016 83FF      		sbrs r24,3
+  42 0018 00C0      		rjmp .L2
+  29:.././hal/xmega/xmega_hal.c ****     
+  30:.././hal/xmega/xmega_hal.c ****     //Switch clock source
+  31:.././hal/xmega/xmega_hal.c ****     CCP = CCP_IOREG_gc;
+  43               		.loc 1 31 5 is_stmt 1 view .LVU12
+  44               		.loc 1 31 9 is_stmt 0 view .LVU13
+  45 001a 88ED      		ldi r24,lo8(-40)
+  46 001c 84BF      		out __CCP__,r24
+  32:.././hal/xmega/xmega_hal.c ****     CLK.CTRL = CLK_SCLKSEL_XOSC_gc;    
+  47               		.loc 1 32 5 is_stmt 1 view .LVU14
+  48               		.loc 1 32 14 is_stmt 0 view .LVU15
+  49 001e 83E0      		ldi r24,lo8(3)
+  50 0020 8093 4000 		sts 64,r24
+  33:.././hal/xmega/xmega_hal.c ****     
+  34:.././hal/xmega/xmega_hal.c ****     //Turn off other sources besides external    
+  35:.././hal/xmega/xmega_hal.c ****     OSC.CTRL = OSC_XOSCEN_bm;
+  51               		.loc 1 35 5 is_stmt 1 view .LVU16
+  52               		.loc 1 35 14 is_stmt 0 view .LVU17
+  53 0024 88E0      		ldi r24,lo8(8)
+  54 0026 8093 5000 		sts 80,r24
+  55               	/* epilogue start */
+  36:.././hal/xmega/xmega_hal.c ****     
+  37:.././hal/xmega/xmega_hal.c ****  #if PLATFORM == CW303
+  38:.././hal/xmega/xmega_hal.c ****     PORTA.DIRSET = PIN5_bm | PIN6_bm;
+  39:.././hal/xmega/xmega_hal.c ****     PORTA.OUTSET = PIN5_bm | PIN6_bm;
+  40:.././hal/xmega/xmega_hal.c ****  #endif
+  41:.././hal/xmega/xmega_hal.c **** }
+  56               		.loc 1 41 1 view .LVU18
+  57 002a 0895      		ret
+  58               		.cfi_endproc
+  59               	.LFE11:
+  61               	.Letext0:
+  62               		.file 2 "/usr/local/Cellar/avr-gcc/9.3.0/avr/include/stdint.h"
+  63               		.file 3 "/usr/local/Cellar/avr-gcc/9.3.0/avr/include/avr/iox128d3.h"
+  64               		.file 4 "/usr/local/Cellar/avr-gcc/9.3.0/lib/avr-gcc/9/gcc/avr/9.3.0/include/stddef.h"
+  65               		.file 5 "/usr/local/Cellar/avr-gcc/9.3.0/avr/include/stdlib.h"
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 xmega_hal.c
+/var/folders/k6/th7ms_x56q93d_45_7qvs5nw0000gn/T//cck80Lsq.s:2      *ABS*:000000000000003e __SP_H__
+/var/folders/k6/th7ms_x56q93d_45_7qvs5nw0000gn/T//cck80Lsq.s:3      *ABS*:000000000000003d __SP_L__
+/var/folders/k6/th7ms_x56q93d_45_7qvs5nw0000gn/T//cck80Lsq.s:4      *ABS*:000000000000003f __SREG__
+/var/folders/k6/th7ms_x56q93d_45_7qvs5nw0000gn/T//cck80Lsq.s:5      *ABS*:000000000000003b __RAMPZ__
+/var/folders/k6/th7ms_x56q93d_45_7qvs5nw0000gn/T//cck80Lsq.s:6      *ABS*:0000000000000034 __CCP__
+/var/folders/k6/th7ms_x56q93d_45_7qvs5nw0000gn/T//cck80Lsq.s:7      *ABS*:0000000000000000 __tmp_reg__
+/var/folders/k6/th7ms_x56q93d_45_7qvs5nw0000gn/T//cck80Lsq.s:8      *ABS*:0000000000000001 __zero_reg__
+/var/folders/k6/th7ms_x56q93d_45_7qvs5nw0000gn/T//cck80Lsq.s:14     .text:0000000000000000 platform_init
+
+NO UNDEFINED SYMBOLS
