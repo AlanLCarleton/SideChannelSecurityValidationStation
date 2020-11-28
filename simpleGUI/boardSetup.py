@@ -16,6 +16,15 @@ def subprocessCmd(command):
 
 #***********************ONLY WORKS WITH AES128***********************
 def runInitSetup(scopeType, platForm, cryptoTarget):
+    '''
+        Initializes ChipWhisperer board and target board.
+        
+        param scopeType: the type of oscilloscope being used
+        param platForm: the target device platform
+        param cryptoTarget: the target cryptography algorithim
+
+        return: chipwhisperer scope object
+    '''
     #build target board firmware
     command = '-s "$platForm" "$cryptoTarget"; cd ../requiredFiles/hardware/victims/firmware/simpleserial-aes; make platForm=$1 cryptoTarget=$2'
     subprocessCmd(command)
