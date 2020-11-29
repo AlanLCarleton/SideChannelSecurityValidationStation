@@ -34,7 +34,11 @@ def runInitSetup(scopeType, platForm, cryptoTarget):
         if not scope.connectStatus:
             scope.con()
     except NameError:
-        scope = cw.scope()
+        try:
+            scope = cw.scope()
+        except OSError:
+            # board is probably not plugged in
+            return None
 
     try:
         target = cw.target(scope)
