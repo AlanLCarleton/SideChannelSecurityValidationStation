@@ -52,22 +52,26 @@ while True:  # Event Loop
             # Intialize ChipWhisperer and Target board 
             scope = boardSetup.runInitSetup(Scope, Target, Crypto)
 
-            window['status'].update('Boards Initialized')
-            window['progbar'].update(150)
-            time.sleep(1)
-            
-            if Type == 'CPA':
-                window['status'].update('Running CPA Attack')
-                window['progbar'].update(350)
+            if scope is not None:
+                window['status'].update('Boards Initialized')
+                window['progbar'].update(150)
+                time.sleep(1)
                 
-                attackResult = testAttacks.basicCPA(scope)
-                window['progbar'].update(1000)
-                window['status'].update('CPA Attack Complete!')
+                if Type == 'CPA':
+                    window['status'].update('Running CPA Attack')
+                    window['progbar'].update(350)
+                    
+                    attackResult = testAttacks.basicCPA(scope)
+                    window['progbar'].update(1000)
+                    window['status'].update('CPA Attack Complete!')
 
-                if attackResult is not None:
-                    sg.popup(attackResult, font='Any 12')
-            elif Type == 'DPA':
-                print("Insert code here")
+                    if attackResult is not None:
+                        sg.popup(attackResult, font='Any 12')
+                elif Type == 'DPA':
+                    print("Insert code here")
+            else:
+                window['status'].update(text_color='red')
+                window['status'].update('Board Initialization Failed')
         else:
             window['status'].update(text_color='red')
             window['status'].update('Selected options are not supported')
