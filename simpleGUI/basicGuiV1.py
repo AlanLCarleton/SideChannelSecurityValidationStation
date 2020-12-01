@@ -16,7 +16,7 @@ layout = [[sg.Text('Scope Type:', font='Any 18'), sg.Combo(['OPENADC', 'CWNANO']
            sg.Text('Target Platform:', font='Any 18'), sg.Combo(['CWLITEARM', 'CWLITEXMEGA', 'CWNANO'], font='Any 12', key = 'TARGET')],
           [sg.Text('Cryptography Algorithim:', font='Any 18'),
            sg.Combo(['AES128', 'DES', 'RSA'], font='Any 12', key='CRYPTO')],
-          [sg.Checkbox('CPA', default=True, enable_events=True, key='cpa'),
+          [sg.Checkbox('CPA', default=True, enable_events=True, disabled=True, key='cpa'),
            sg.Checkbox('DPA', enable_events=True, key='dpa')],
           [sg.Text('\nAttack Progress:', font = 'Any 12')],
           [sg.ProgressBar(1000, orientation='h',
@@ -31,9 +31,13 @@ while True:  # Event Loop
     if event == sg.WIN_CLOSED or event == 'Exit':  # Exit program
         break
     elif event == 'dpa': # Set 'cpa' radio button to oposite of 'dpa' (only one can be selected at a time)
+        window['cpa'].update(disabled=False)
         window['cpa'].update(not(values['dpa']))
+        window['dpa'].update(disabled=True)
     elif event == 'cpa':  # Set 'dpa' radio button to oposite of 'cpa'
+        window['dpa'].update(disabled=False)
         window['dpa'].update(not(values['cpa']))
+        window['cpa'].update(disabled=True)
     elif event == 'Run': #run attack
         Scope = values['SCOPE']
         Target = values['TARGET']
