@@ -3,7 +3,7 @@ import chipwhisperer.analyzer as cwa
 import guiUtils as utils
 import time
 
-def basicCPA(scope):
+def basicCPA(scope, traceAmount):
     target = cw.target(scope)
     
     #capturing some traces
@@ -13,7 +13,7 @@ def basicCPA(scope):
 
     proj = cw.create_project("Lab 4_3", overwrite=True)
 
-    N = 50
+    N = traceAmount
     for i in range(N):
         key, text = ktp.next()
         trace = cw.capture_trace(scope, target, text, key)

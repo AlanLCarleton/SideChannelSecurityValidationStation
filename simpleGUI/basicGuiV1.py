@@ -18,6 +18,7 @@ layout = [[sg.Text('Scope Type:', font='Any 18'), sg.Combo(['OPENADC', 'CWNANO']
            sg.Combo(['AES128', 'DES', 'RSA'], font='Any 12', key='CRYPTO')],
           [sg.Checkbox('CPA', default=True, enable_events=True, disabled=True, key='cpa'),
            sg.Checkbox('DPA', enable_events=True, key='dpa')],
+          [sg.Text('Number of Traces:'), sg.InputText(key='TRACENUMBER', default_text='50', size=(10, 1))],
           [sg.Text('\nAttack Progress:', font = 'Any 12')],
           [sg.ProgressBar(1000, orientation='h',
                           size=(25, 15), key='progbar'), sg.Text(size=(30, 1), font='Any 12', key = 'status')],
@@ -66,7 +67,8 @@ while True:  # Event Loop
                     window['status'].update('Running CPA Attack')
                     window['progbar'].update(350)
                     
-                    attackResult, traceData = testAttacks.basicCPA(scope)
+                    attackResult, traceData = testAttacks.basicCPA(
+                        scope, int(values['TRACENUMBER']))
                     window['progbar'].update(1000)
                     window['status'].update('CPA Attack Complete!')
 
