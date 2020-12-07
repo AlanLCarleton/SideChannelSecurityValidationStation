@@ -51,7 +51,14 @@ while True:  # Event Loop
         print(Crypto)
         print(Type)
         '''
-        if (Scope+Target+Crypto+Type) in VALID_OPTIONS: # check if user slected options are valid first
+        traceAmount = None
+        try:
+            traceAmount = int(values['TRACENUMBER'])
+        except:
+            print("Entered value for Number of Traces must be a number")
+
+        # check if user slected options are valid first
+        if (Scope+Target+Crypto+Type) in VALID_OPTIONS and traceAmount is not None:
             window['status'].update(text_color = 'green')
             window['status'].update('Initiallizing boards')
             window['progbar'].update(20)
@@ -68,7 +75,7 @@ while True:  # Event Loop
                     window['progbar'].update(350)
                     
                     attackResult, traceData = testAttacks.basicCPA(
-                        scope, int(values['TRACENUMBER']))
+                        scope, traceAmount)
                     window['progbar'].update(1000)
                     window['status'].update('CPA Attack Complete!')
 
