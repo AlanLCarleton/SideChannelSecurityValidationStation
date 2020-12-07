@@ -21,9 +21,10 @@ layout = [[sg.Text('Scope Type:', font='Any 18'), sg.Combo(['OPENADC', 'CWNANO']
           [sg.Text('\nAttack Progress:', font = 'Any 12')],
           [sg.ProgressBar(1000, orientation='h',
                           size=(25, 15), key='progbar'), sg.Text(size=(30, 1), font='Any 12', key = 'status')],
-          [sg.Button('Run'), sg.Button('Exit')]]
+          [sg.Button('Run'), sg.Button('View Trace'), sg.Button('Exit')]]
 
-window = sg.Window('Pattern 2B', layout)
+window = sg.Window('Power Analysis Security Tool', layout)
+traceData = None
 
 while True:  # Event Loop
     event, values = window.read()
@@ -65,7 +66,7 @@ while True:  # Event Loop
                     window['status'].update('Running CPA Attack')
                     window['progbar'].update(350)
                     
-                    attackResult = testAttacks.basicCPA(scope)
+                    attackResult, traceData = testAttacks.basicCPA(scope)
                     window['progbar'].update(1000)
                     window['status'].update('CPA Attack Complete!')
 
@@ -79,5 +80,11 @@ while True:  # Event Loop
         else:
             window['status'].update(text_color='red')
             window['status'].update('Selected options are not supported')
+    elif event == 'View Trace':  # view raw trace data
+        if traceData is not None:
+            sg.popup_scrolled(traceData, font='10')
+        else:
+            window['status'].update(text_color='red')
+            window['status'].update('No traces found! Please run program first')
 
 window.close()
