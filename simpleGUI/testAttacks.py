@@ -26,7 +26,7 @@ def basicCPA(scope, traceAmount):
     target.dis()
 
     #EXAMPLE OF PLOTTING TRACE, NOT SURE IF plotTraces IS PLOTTING CORRECT VALUES YET
-    utils.plotTraces(proj.waves)
+    #utils.plotTraces(proj.waves)
 
     traceSring = 'Trace key: ' + str(trace.key).replace('CWbytearray', '') + '\n\n'
     i = 1
@@ -54,4 +54,4 @@ def basicCPA(scope, traceAmount):
     time1 = time.perf_counter()    
     results = attack.run()
     time2 = time.perf_counter()
-    return((str(results) + '\n\nAttack took: ' + str(round(time2-time1, 3)) + 'secs.'), traceSring)
+    return(str(results), round(time2-time1, 3), traceSring)
