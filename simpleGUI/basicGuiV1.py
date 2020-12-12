@@ -1,6 +1,7 @@
 import PySimpleGUI as sg
 import boardSetup
 import testAttacks
+import guiUtils as utils
 import time
 
 
@@ -8,7 +9,7 @@ VALID_OPTIONS = ["OPENADCCWLITEARMTINYAES128CCPA",  # OPENADC-CWLITEARM-TINYAES1
                  "OPENADCCWLITEXMEGATINYAES128CCPA",  # OPENADC-CWLITEXMEGA-TINYAES128C-CPA
                  "OPENADCCWLITEARMTINYAES128CDPA",  # OPENADC-CWLITEARM-TINYAES128C-DPA
                  "OPENADCCWLITEXMEGATINYAES128CDPA"]  # OPENADC-CWLITEXMEGA-TINYAES128C-DPA
-
+MAXTRACES = 100
 
 sg.theme('reddit')
 
@@ -18,7 +19,8 @@ layout = [[sg.Text('Scope Type:', font='Any 18'), sg.Combo(['OPENADC', 'CWNANO']
            sg.Combo(['AES128', 'DES', 'RSA'], font='Any 12', key='CRYPTO')],
           [sg.Checkbox('CPA', default=True, enable_events=True, disabled=True, key='cpa'),
            sg.Checkbox('DPA', enable_events=True, key='dpa')],
-          [sg.Text('Number of Traces:'), sg.InputText(key='TRACENUMBER', default_text='50', size=(10, 1))],
+          [sg.Text('Initial Number of Traces:'), sg.InputText(key='TRACENUMBER', default_text='15', size=(9, 2)), sg.Text(
+              'Trace Increment Amount:'), sg.InputText(key='TRACEINCREMENT', default_text='2', size=(9, 2))],
           [sg.Text('\nAttack Progress:', font = 'Any 12')],
           [sg.ProgressBar(1000, orientation='h',
                           size=(25, 15), key='progbar'), sg.Text(size=(30, 1), font='Any 12', key = 'status')],
@@ -52,40 +54,61 @@ while True:  # Event Loop
         print(Type)
         '''
         traceAmount = None
+        traceIncrement = None
         try:
             traceAmount = int(values['TRACENUMBER'])
+            traceIncrement = int(values['TRACEINCREMENT'])
         except:
-            print("Entered value for Number of Traces must be a number")
+            print("Entered value for Number of Traces or Increment must be a number")
 
         # check if user slected options are valid first
-        if (Scope+Target+Crypto+Type) in VALID_OPTIONS and traceAmount is not None:
+        if (Scope+Target+Crypto+Type) in VALID_OPTIONS and traceAmount is not None and traceIncrement is not None:
             window['status'].update(text_color = 'green')
             window['status'].update('Initiallizing boards')
             window['progbar'].update(20)
-            # Intialize ChipWhisperer and Target board 
-            scope = boardSetup.runInitSetup(Scope, Target, Crypto)
 
-            if scope is not None:
-                window['status'].update('Boards Initialized')
-                window['progbar'].update(150)
-                time.sleep(1)
-                
-                if Type == 'CPA':
-                    window['status'].update('Running CPA Attack')
-                    window['progbar'].update(350)
+            attackTime = 0
+            attackResult = None
+            sucess = False
+            while not sucess and traceAmount <= MAXTRACES:
+                # Intialize ChipWhisperer and Target board 
+                scope = boardSetup.runInitSetup(Scope, Target, Crypto)
+
+                if scope is not None:
+                    window['status'].update('Boards Initialized')
+                    window['progbar'].update(150)
+                    time.sleep(1)
                     
-                    attackResult, traceData = testAttacks.basicCPA(
-                        scope, traceAmount)
-                    window['progbar'].update(1000)
-                    window['status'].update('CPA Attack Complete!')
+                    if Type == 'CPA':
+                        window['status'].update('Running CPA Attack')
+                        window['progbar'].update(350)
 
-                    if attackResult is not None:
-                        sg.popup(attackResult, font='Any 12')
-                elif Type == 'DPA':
-                    print("Insert code here")
+                        attackResult, attackTime, traceData = testAttacks.basicCPA(
+                            scope, traceAmount)
+                        #window['progbar'].update(1000)
+                        #window['status'].update('CPA Attack Complete!')
+                        #wtite results to CSV
+                        utils.writeResultsToCSV(attackResult)
+                        if not(utils.checkZeroCorrelation()):
+                            sucess = True
+
+                    elif Type == 'DPA':
+                        print("Insert code here")       
+                else:
+                    window['status'].update(text_color='red')
+                    window['status'].update('Board Initialization Failed')
+                
+                traceAmount += traceIncrement
+            
+            if attackResult is not None:
+                window['progbar'].update(1000)
+                window['status'].update('CPA Attack Complete!')
+                resultPrint = attackResult + "\nSucessful attack required: " + str(traceAmount - traceIncrement) + " traces\nand took: " + str(attackTime) + " seconds"
+                sg.popup(resultPrint, font='Any 12')
             else:
                 window['status'].update(text_color='red')
-                window['status'].update('Board Initialization Failed')
+                msgStr = 'Encryption tested with ' + str(MAXTRACES) + ' traces without recoering the key'
+                window['status'].update(msgStr)
         else:
             window['status'].update(text_color='red')
             window['status'].update('Selected options are not supported')
