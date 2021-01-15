@@ -61,6 +61,7 @@ while True:  # Event Loop
         except:
             print("Entered value for Number of Traces or Increment must be a number")
 
+        boardInitialized = True
         # check if user slected options are valid first
         if (Scope+Target+Crypto+Type) in VALID_OPTIONS and traceAmount is not None and traceIncrement is not None:
             window['status'].update(text_color = 'green')
@@ -70,11 +71,12 @@ while True:  # Event Loop
             attackTime = 0
             attackResult = None
             sucess = False
-            while not sucess and traceAmount <= MAXTRACES:
+            while not sucess and traceAmount <= MAXTRACES and boardInitialized:
                 # Intialize ChipWhisperer and Target board 
                 scope = boardSetup.runInitSetup(Scope, Target, Crypto)
+                boardInitialized = scope is not None
 
-                if scope is not None:
+                if boardInitialized:
                     window['status'].update('Boards Initialized')
                     window['progbar'].update(150)
                     time.sleep(1)
@@ -95,20 +97,23 @@ while True:  # Event Loop
                     elif Type == 'DPA':
                         print("Insert code here")       
                 else:
-                    window['status'].update(text_color='red')
-                    window['status'].update('Board Initialization Failed')
+                    boardInitialized = False
                 
                 traceAmount += traceIncrement
             
-            if attackResult is not None:
-                window['progbar'].update(1000)
-                window['status'].update('CPA Attack Complete!')
-                resultPrint = attackResult + "\nSucessful attack required: " + str(traceAmount - traceIncrement) + " traces\nand took: " + str(attackTime) + " seconds"
-                sg.popup(resultPrint, font='Any 12')
-            else:
+            if not(boardInitialized):
                 window['status'].update(text_color='red')
-                msgStr = 'Encryption tested with ' + str(MAXTRACES) + ' traces without recoering the key'
-                window['status'].update(msgStr)
+                window['status'].update('Board Initialization Failed')
+            else:
+                if attackResult is not None:
+                    window['progbar'].update(1000)
+                    window['status'].update('CPA Attack Complete!')
+                    resultPrint = attackResult + "\nSucessful attack required: " + str(traceAmount - traceIncrement) + " traces\nand took: " + str(attackTime) + " seconds"
+                    sg.popup(resultPrint, font='Any 12')
+                else:
+                    window['status'].update(text_color='red')
+                    msgStr = 'Encryption tested with ' + str(MAXTRACES) + ' traces without recoering the key'
+                    window['status'].update(msgStr)
         else:
             window['status'].update(text_color='red')
             window['status'].update('Selected options are not supported')
