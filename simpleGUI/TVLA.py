@@ -17,6 +17,7 @@ import time
 import numpy as np
 from scipy.stats import ttest_ind
 import holoviews as hv
+import matplotlib.pyplot as plt
 
 #User defined AES keys/data (for basicTVLA):
 #I_fixed = string for fixed test plaintext (hex)
@@ -66,20 +67,37 @@ def basicCWTVLA(N): #N number of traces as args
     #calculate mean of both fixed and random + plots
     fixed_text_mean = np.mean(fixed_text_arr, axis=0)
     rand_text_mean = np.mean(rand_text_arr, axis=0)
-    cw.plot(rand_text_mean) * cw.plot(fixed_text_mean)
-    
+    #cw.plot(rand_text_mean) * cw.plot(fixed_text_mean)
+    plt.figure(1)
+    plt.plot(rand_text_mean)
+    plt.plot(fixed_text_mean)
+    plt.show()
+
     #show differences in Fixed Vs Random plots
-    cw.plot(fixed_text_mean - rand_text_mean)
+    #cw.plot(fixed_text_mean - rand_text_mean)
+    plt.figure(2)
+    plt.plot(fixed_text_mean - rand_text_mean)
+    plt.show()
+
     #actually perform & plot t-test (idk if its welch)
     t_val = ttest_ind(fixed_text_mean, rand_text_arr,
                       axis=0, equal_var=False)[0]
-    cw.plot(t_val)
-    
+    #cw.plot(t_val)
+    plt.figure(3)
+    plt.plot(t_val)
+    plt.show()
+
     #Plot last comprehensive graph from SCA203 Tutorial
     t_val = [ttest_ind(fixed_text_arr[:N//2], rand_text_arr[:N//2], axis=0, equal_var=False)[0], ttest_ind(fixed_text_arr[N//2:], rand_text_arr[N//2:], axis=0, equal_var=False)[0]]
-    cv = cw.plot(t_val[0]) * cw.plot(t_val[1]) * cw.plot([4.5]*len(fixed_text_arr[0])) * cw.plot([-4.5]*len(fixed_text_arr[0]))
-    
-    
+    #cv = cw.plot(t_val[0]) * cw.plot(t_val[1]) * cw.plot([4.5]*len(fixed_text_arr[0])) * cw.plot([-4.5]*len(fixed_text_arr[0]))
+    #cv
+    plt.figure(4)
+    plt.plot(t_val[0])
+    plt.plot(t_val[1])
+    plt.plot([4.5]*len(fixed_text_arr[0]))
+    plt.plot([-4.5]*len(fixed_text_arr[0]))
+    plt.show()
+
     
     #EXAMPLE OF PLOTTING TRACE, NOT SURE IF plotTraces IS PLOTTING CORRECT VALUES YET
     #utils.plotTraces(proj.waves)
