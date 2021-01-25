@@ -11,7 +11,10 @@ def basicCPA(scope, traceAmount):
     trace_array = []
     textin_array = []
 
-    proj = cw.create_project("Lab 4_3", overwrite=True)
+    proj = cw.create_project("Lab Test", overwrite=True)
+
+
+    print(proj.location)
 
     N = traceAmount
     for i in range(N):
@@ -26,13 +29,16 @@ def basicCPA(scope, traceAmount):
     target.dis()
 
     #EXAMPLE OF PLOTTING TRACE, NOT SURE IF plotTraces IS PLOTTING CORRECT VALUES YET
-    #utils.plotTraces(proj.waves)
+    utils.plotTraces(proj.waves)
 
     traceSring = 'Trace key: ' + str(trace.key).replace('CWbytearray', '') + '\n\n'
     i = 1
     for trace in proj.traces:
-        temp = ('Trace ' + str(i) + '\nTrace wave: ' + str(trace.wave[0])+'\n' + 'Text in: ' + str(trace.textin)+'\n' +
-                'Text out: ' + str(trace.textout)+'\n')
+        temp = ('Trace ' + str(i) + '\nTrace wave: ')
+        #for x in trace.wave:
+            #temp += str(x)
+        
+        temp += '\n' + 'Text in: ' + str(trace.textin)+'\n' + 'Text out: ' + str(trace.textout)+'\n'
         traceSring += str(temp).replace('CWbytearray', '') + '\n'
         i += 1
 
@@ -54,4 +60,5 @@ def basicCPA(scope, traceAmount):
     time1 = time.perf_counter()    
     results = attack.run()
     time2 = time.perf_counter()
+    proj.close(save=True)
     return(str(results), round(time2-time1, 3), traceSring)

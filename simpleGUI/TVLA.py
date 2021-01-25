@@ -12,6 +12,7 @@
 import chipwhisperer as cw
 import chipwhisperer.analyzer as cwa
 import guiUtils as utils
+import boardSetup
 import time
 import numpy as np
 from scipy.stats import ttest_ind
@@ -23,20 +24,19 @@ import holoviews as hv
 #K_gen = string for AES ciphertext generation (hex)
 #I_rand = initial string for AES random test plaintext (hex)
 
+SCOPETYPE = 'OPENADC'
+PLATFORM = 'CWLITEXMEGA'
+#PLATFORM = 'CWLITEARM'
+CRYPTO_TARGET = 'TINYAES128C'
+
 def basicCWTVLA(N): #N number of traces as args
     #replicates ChipWhisperer's SCA203 Intro to TVLA tutorial
     #Based on CW SCA203 TVLA & CWTVLA Untitled.ipynb
-    scope = cw.scope()
-    target = cw.target(scope) #Handled by SimpleGUI?
-    #scope.default_setup() #idk from cwtvla
-    time.sleep(0.05)
-    
-    #Program target (if necessary, choose stm32 or xmega)
-    #cw.program_target(scope, cw.programmers.STM32FProgrammer, "../../hardware/victims/firmware/simpleserial-aes/simpleserial-aes-{}.hex".format(PLATFORM))
-    cw.program_target(scope, cw.programmers.XMEGAProgrammer, "../../hardware/victims/firmware/simpleserial-aes/simpleserial-aes-{}.hex".format(PLATFORM))
+    scope = boardSetup.runInitSetup(SCOPETYPE, PLATFORM, CRYPTO_TARGET)
+    target = cw.target(scope)  # Handled by SimpleGUI?
     
     #init & capture some traces
-    ktp = cw.ktp.TVLATest()
+    ktp = cw.ktp.TVLATTest()
     ktp.init(N)
     fixed_text_arr = []
     rand_text_arr = []
@@ -71,14 +71,15 @@ def basicCWTVLA(N): #N number of traces as args
     #show differences in Fixed Vs Random plots
     cw.plot(fixed_text_mean - rand_text_mean)
     #actually perform & plot t-test (idk if its welch)
-    t_val = ttest_ind(group1, group2, axis=0, equal_var=False)[0]
+    t_val = ttest_ind(fixed_text_mean, rand_text_arr,
+                      axis=0, equal_var=False)[0]
     cw.plot(t_val)
     
     #Plot last comprehensive graph from SCA203 Tutorial
     t_val = [ttest_ind(fixed_text_arr[:N//2], rand_text_arr[:N//2], axis=0, equal_var=False)[0], ttest_ind(fixed_text_arr[N//2:], rand_text_arr[N//2:], axis=0, equal_var=False)[0]]
     cv = cw.plot(t_val[0]) * cw.plot(t_val[1]) * cw.plot([4.5]*len(fixed_text_arr[0])) * cw.plot([-4.5]*len(fixed_text_arr[0]))
     
-    cv
+    
     
     #EXAMPLE OF PLOTTING TRACE, NOT SURE IF plotTraces IS PLOTTING CORRECT VALUES YET
     #utils.plotTraces(proj.waves)
@@ -101,3 +102,6 @@ def basicCWTVLA(N): #N number of traces as args
     '''
     #END OF FILE (EOF)
     
+
+if __name__ == "__main__":
+    basicCWTVLA(25)
