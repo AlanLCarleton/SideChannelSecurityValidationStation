@@ -29,6 +29,7 @@ SCOPETYPE = 'OPENADC'
 PLATFORM = 'CWLITEXMEGA'
 #PLATFORM = 'CWLITEARM'
 CRYPTO_TARGET = 'TINYAES128C'
+#CRYPTO_TARGET = 'AVRCRYPTOLIB'
 
 def basicCWTVLA(N): #N number of traces as args
     #replicates ChipWhisperer's SCA203 Intro to TVLA tutorial
@@ -45,7 +46,11 @@ def basicCWTVLA(N): #N number of traces as args
     #collect traces for both fixed and random sets
     for i in range(2*N):
         key, text = ktp.next() #I think cwtvla switches ktp's between both randomly
-        trace = cw.capture_trace(scope, target, text, key)
+        if CRYPTO_TARGET == 'TINYAES128C':
+            trace = cw.capture_trace(scope, target, text, key)
+        #TEMPORARY IMPLEMENTATION FOR DES
+        elif CRYPTO_TARGET == 'AVRCRYPTOLIB':
+            trace = cw.capture_trace(scope, target, text, key, False)
         if not trace:
             print("[Trace: %d]: No trace captured.\n", i)
             continue

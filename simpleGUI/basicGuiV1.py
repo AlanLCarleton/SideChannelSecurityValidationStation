@@ -8,7 +8,11 @@ import time
 VALID_OPTIONS = ["OPENADCCWLITEARMTINYAES128CCPA",  # OPENADC-CWLITEARM-TINYAES128C-CPA
                  "OPENADCCWLITEXMEGATINYAES128CCPA",  # OPENADC-CWLITEXMEGA-TINYAES128C-CPA
                  "OPENADCCWLITEARMTINYAES128CDPA",  # OPENADC-CWLITEARM-TINYAES128C-DPA
-                 "OPENADCCWLITEXMEGATINYAES128CDPA"]  # OPENADC-CWLITEXMEGA-TINYAES128C-DPA
+                 "OPENADCCWLITEXMEGATINYAES128CDPA",  # OPENADC-CWLITEXMEGA-TINYAES128C-DPA
+                 "OPENADCCWLITEARMTINYAES128CTVLA",  # OPENADC-CWLITEARM-TINYAES128C-TVLA
+                 "OPENADCCWLITEXMEGATINYAES128CTVLA",  # OPENADC-CWLITEXMEGA-TINYAES128C-TVLA
+                 "OPENADCCWLITEARMAVRCRYPTOLIBTVLA",  # OPENADC-CWLITEARM-AVRCRYPTOLIB-TVLA
+                 "OPENADCCWLITEXMEGAAVRCRYPTOLIBTVLA"]  # OPENADC-CWLITEXMEGA-TINYAES128C-TVLA
 MAXTRACES = 100
 
 sg.theme('reddit')
@@ -17,8 +21,9 @@ layout = [[sg.Text('Scope Type:', font='Any 18'), sg.Combo(['OPENADC', 'CWNANO']
            sg.Text('Target Platform:', font='Any 18'), sg.Combo(['CWLITEARM', 'CWLITEXMEGA', 'CWNANO'], font='Any 12', key = 'TARGET')],
           [sg.Text('Cryptography Algorithim:', font='Any 18'),
            sg.Combo(['AES128', 'DES', 'RSA'], font='Any 12', key='CRYPTO')],
-          [sg.Checkbox('CPA', default=True, enable_events=True, disabled=True, key='cpa'),
-           sg.Checkbox('DPA', enable_events=True, key='dpa')],
+          [sg.Checkbox('CPA', enable_events=True, key='cpa'),
+           sg.Checkbox('DPA', enable_events=True, key='dpa'),
+           sg.Checkbox('TVLA', default=True, enable_events=True, disabled=True, key='tvla')],
           [sg.Text('Initial Number of Traces:'), sg.InputText(key='TRACENUMBER', default_text='15', size=(9, 2)), sg.Text(
               'Trace Increment Amount:'), sg.InputText(key='TRACEINCREMENT', default_text='2', size=(9, 2))],
           [sg.Text('\nAttack Progress:', font = 'Any 12')],
@@ -34,19 +39,40 @@ while True:  # Event Loop
     #print(event, values)
     if event == sg.WIN_CLOSED or event == 'Exit':  # Exit program
         break
-    elif event == 'dpa': # Set 'cpa' radio button to oposite of 'dpa' (only one can be selected at a time)
+    elif event == 'dpa': # Set 'cpa' and 'tvla' radio button to oposite of 'dpa' (only one can be selected at a time)
         window['cpa'].update(disabled=False)
         window['cpa'].update(not(values['dpa']))
+        window['tvla'].update(disabled=False)
+        window['tvla'].update(not(values['dpa']))
         window['dpa'].update(disabled=True)
     elif event == 'cpa':  # Set 'dpa' radio button to oposite of 'cpa'
         window['dpa'].update(disabled=False)
         window['dpa'].update(not(values['cpa']))
+        window['tvla'].update(disabled=False)
+        window['tvla'].update(not(values['cpa']))
         window['cpa'].update(disabled=True)
+    elif event == 'tvla':  # Set 'dpa' radio button to oposite of 'cpa'
+        window['cpa'].update(disabled=False)
+        window['cpa'].update(not(values['tvla']))
+        window['dpa'].update(disabled=False)
+        window['dpa'].update(not(values['tvla']))
+        window['tvla'].update(disabled=True)
     elif event == 'Run': #run attack
         Scope = values['SCOPE']
         Target = values['TARGET']
-        Crypto = 'TINYAES128C' if values['CRYPTO'] == 'AES128' else values['CRYPTO']
-        Type = 'CPA' if values['cpa'] else 'DPA'
+        Crypto = ''
+        if values['CRYPTO'] == 'AES128':
+            Crypto = 'TINYAES128C'
+        elif values['CRYPTO'] == 'DES':
+            Crypto = 'AVRCRYPTOLIB'
+        else:
+            Crypto = values['CRYPTO']
+        Type = ''
+        if values['cpa']:
+            Type = 'CPA'
+        elif values['dpa']:
+            Type = 'DPA'
+        else: Type = 'TVLA'
         '''
         print(Scope)
         print(Target)
@@ -95,7 +121,23 @@ while True:  # Event Loop
                             sucess = True
 
                     elif Type == 'DPA':
-                        print("Insert code here")       
+                        print("Insert code here")
+                        sucess = True
+
+                    # ROUGH IMPLEMENTATION OF TVLA
+                    #STILL NEED TO INCORPORATE THE INCREMENTAL FEATURE
+                    elif Type == 'TVLA':
+                        window['status'].update(
+                            'Running TVLA T-test on ' + values['CRYPTO'])
+                        window['progbar'].update(350)
+
+                        testAttacks.basicCWTVLA(scope, Crypto, 25)
+                        window['progbar'].update(1000)
+                        window['status'].update('TLVA Complete!')
+                        #wtite results to CSV
+                        #utils.writeResultsToCSV(attackResult)
+                        #if not(utils.checkZeroCorrelation()):
+                        sucess = True
                 else:
                     boardInitialized = False
                 
