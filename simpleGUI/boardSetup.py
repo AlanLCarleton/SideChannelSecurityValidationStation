@@ -3,9 +3,6 @@ import chipwhisperer as cw
 import chipwhisperer.analyzer as cwa
 import subprocess
 
-SCOPETYPE = 'OPENADC'
-PLATFORM = 'CWLITEXMEGA'
-CRYPTO_TARGET = 'TINYAES128C'
 
 #*********************BEGIN SETUP***********************
 
@@ -26,7 +23,10 @@ def runInitSetup(scopeType, platForm, cryptoTarget):
         return: chipwhisperer scope object
     '''
     #build target board firmware
-    command = '-s "$platForm" "$cryptoTarget"; cd ../requiredFiles/hardware/victims/firmware/simpleserial-aes; make platForm=$1 cryptoTarget=$2'
+    if cryptoTarget == 'TINYAES128C':
+        command = '-s "$platForm" "$cryptoTarget"; cd ../requiredFiles/hardware/victims/firmware/simpleserial-aes; make platForm=$1 cryptoTarget=$2'
+    elif cryptoTarget == 'AVRCRYPTOLIB':
+        command = '-s "$platForm" "$cryptoTarget"; cd ../requiredFiles/hardware/victims/firmware/simpleserial-des; make platForm=$1 cryptoTarget=$2'
     subprocessCmd(command)
 
     #Start of board setup
@@ -46,7 +46,7 @@ def runInitSetup(scopeType, platForm, cryptoTarget):
         print("INFO: Caught exception on reconnecting to target - attempting to reconnect to scope first.")
         print("INFO: This is a work-around when USB has died without Python knowing. Ignore errors above this line.")
         scope = cw.scope()
-        target = cw.target(scope)
+        #target = cw.target(scope)
 
     print("INFO: Found ChipWhisperer😍")
 
@@ -61,8 +61,10 @@ def runInitSetup(scopeType, platForm, cryptoTarget):
     scope.default_setup()
 
     #programming target
-    cw.program_target(
-        scope, prog, "../requiredFiles/hardware/victims/firmware/simpleserial-aes/simpleserial-aes-{}.hex".format(platForm))
+    if cryptoTarget == 'TINYAES128C':
+        cw.program_target(scope, prog, "../requiredFiles/hardware/victims/firmware/simpleserial-aes/simpleserial-aes-{}.hex".format(platForm))
+    elif cryptoTarget == 'AVRCRYPTOLIB':
+        cw.program_target(scope, prog, "../requiredFiles/hardware/victims/firmware/simpleserial-des/simpleserial-des-{}.hex".format(platForm))
 
     return scope
 
