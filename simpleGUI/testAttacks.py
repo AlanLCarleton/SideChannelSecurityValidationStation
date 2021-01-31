@@ -112,8 +112,11 @@ def basicCWTVLA(scope, cryptoTarget, N):  # N number of traces as args
     #cw.plot(rand_text_mean) * cw.plot(fixed_text_mean)
     plt.figure(1)
     plt.title('Mean of fixed and random text traces')
-    plt.plot(rand_text_mean, 'r')
-    plt.plot(fixed_text_mean, 'g')
+    plt.plot(rand_text_mean, 'r', label='random')
+    plt.plot(fixed_text_mean, 'g', label='fixed')
+    plt.xlabel('trace')
+    plt.ylabel('power')
+    plt.legend(loc='upper right')
     plt.show()
 
     #show differences in Fixed Vs Random plots
@@ -121,8 +124,10 @@ def basicCWTVLA(scope, cryptoTarget, N):  # N number of traces as args
     plt.figure(2)
     plt.title('Differences in mean fixed and random text traces')
     plt.plot(fixed_text_mean - rand_text_mean)
+    plt.xlabel('trace')
+    plt.ylabel('power difference')
     plt.show()
-
+    '''
     #actually perform & plot t-test (idk if its welch)
     t_val = ttest_ind(fixed_text_mean, rand_text_arr,
                       axis=0, equal_var=False)[0]
@@ -130,17 +135,47 @@ def basicCWTVLA(scope, cryptoTarget, N):  # N number of traces as args
     plt.figure(3)
     plt.title('T-test results')
     plt.plot(t_val)
+    plt.xlabel('trace')
+    plt.ylabel('t-value')
     plt.show()
-
+    '''
     #Plot last comprehensive graph from SCA203 Tutorial
     t_val = [ttest_ind(fixed_text_arr[:N//2], rand_text_arr[:N//2], axis=0, equal_var=False)
              [0], ttest_ind(fixed_text_arr[N//2:], rand_text_arr[N//2:], axis=0, equal_var=False)[0]]
     #cv = cw.plot(t_val[0]) * cw.plot(t_val[1]) * cw.plot([4.5]*len(fixed_text_arr[0])) * cw.plot([-4.5]*len(fixed_text_arr[0]))
     #cv
+    t_valAbove = [[], []]
+    for i in range(2):
+        for x in t_val[i]:
+            if abs(x) >= 4.5:
+                t_valAbove[i].append(x)
+
+    resultStr = ''
+    resultStr += (str(len(t_valAbove[0])) +
+          ' t-values calculated from first half of traces are >=4.5\n')
+    resultStr += (str(len(t_valAbove[1])) +
+          ' t-values calculated from second half of traces are >=4.5\n')
+
+    setCompare = len(set(t_valAbove[0]) & set(t_valAbove[1]))
+    resultStr += ('\nFrom both >=4.5 T-value sets: ' +
+          str(setCompare) + ' values are the same at the same point (trace)\n\n')
+
+    if setCompare > 0:
+        resultStr += ('This device can be considered to have failed TVLA T-test (1 or more T-test values were >=4.5 at the same point)\n')
+    else:
+        resultStr += ('This device can be considered to have passed TVLA T-test\n')
+
     plt.figure(4)
     plt.title('T-test results with +-4.5 bounds')
-    plt.plot(t_val[0], 'r')
-    plt.plot(t_val[1], 'b')
-    plt.plot([4.5]*len(fixed_text_arr[0]), 'g')
-    plt.plot([-4.5]*len(fixed_text_arr[0]), 'g')
+    plt.plot(t_val[0], 'r', label='first half of traces used')
+    plt.plot(t_val[1], 'b', label='second half of traces used')
+    plt.plot([4.5]*len(fixed_text_arr[0]), 'g', label='+4.5')
+    plt.plot([-4.5]*len(fixed_text_arr[0]), 'g', label='-4.5')
+    plt.xlabel('trace')
+    plt.ylabel('t-vaue')
+    plt.legend(loc='lower right')
+    plt.ion()
     plt.show()
+    plt.pause(.001)
+
+    return (t_valAbove, resultStr)
