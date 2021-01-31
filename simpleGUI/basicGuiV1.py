@@ -21,9 +21,9 @@ layout = [[sg.Text('Scope Type:', font='Any 18'), sg.Combo(['OPENADC', 'CWNANO']
            sg.Text('Target Platform:', font='Any 18'), sg.Combo(['CWLITEARM', 'CWLITEXMEGA', 'CWNANO'], font='Any 12', key = 'TARGET')],
           [sg.Text('Cryptography Algorithim:', font='Any 18'),
            sg.Combo(['AES128', 'DES', 'RSA'], font='Any 12', key='CRYPTO')],
-          [sg.Checkbox('CPA', enable_events=True, key='cpa'),
+          [sg.Checkbox('CPA', default=True, enable_events=True, disabled=True, key='cpa'),
            sg.Checkbox('DPA', enable_events=True, key='dpa'),
-           sg.Checkbox('TVLA', default=True, enable_events=True, disabled=True, key='tvla')],
+           sg.Checkbox('TVLA', enable_events=True, key='tvla')],
           [sg.Text('Initial Number of Traces:'), sg.InputText(key='TRACENUMBER', default_text='15', size=(9, 2)), sg.Text(
               'Trace Increment Amount:'), sg.InputText(key='TRACEINCREMENT', default_text='2', size=(9, 2))],
           [sg.Text('\nAttack Progress:', font = 'Any 12')],
@@ -57,6 +57,8 @@ while True:  # Event Loop
         window['dpa'].update(disabled=False)
         window['dpa'].update(not(values['tvla']))
         window['tvla'].update(disabled=True)
+        window['TRACENUMBER'].update(25)
+        window['TRACEINCREMENT'].update(0)
     elif event == 'Run': #run attack
         Scope = values['SCOPE']
         Target = values['TARGET']
@@ -96,6 +98,7 @@ while True:  # Event Loop
 
             attackTime = 0
             attackResult = None
+            tvlaResults = None
             sucess = False
             while not sucess and traceAmount <= MAXTRACES and boardInitialized:
                 # Intialize ChipWhisperer and Target board 
@@ -131,12 +134,12 @@ while True:  # Event Loop
                             'Running TVLA T-test on ' + values['CRYPTO'])
                         window['progbar'].update(350)
 
-                        testAttacks.basicCWTVLA(scope, Crypto, 25)
+                        tvlaResults, resultStr = testAttacks.basicCWTVLA(
+                            scope, Crypto, traceAmount)
                         window['progbar'].update(1000)
                         window['status'].update('TLVA Complete!')
                         #wtite results to CSV
-                        #utils.writeResultsToCSV(attackResult)
-                        #if not(utils.checkZeroCorrelation()):
+                        #utils.writeResultsToCSV(tvlaResults)
                         sucess = True
                 else:
                     boardInitialized = False
@@ -152,6 +155,10 @@ while True:  # Event Loop
                     window['status'].update('CPA Attack Complete!')
                     resultPrint = attackResult + "\nSucessful attack required: " + str(traceAmount - traceIncrement) + " traces\nand took: " + str(attackTime) + " seconds"
                     sg.popup(resultPrint, font='Any 12')
+                elif tvlaResults is not None:
+                    window['progbar'].update(1000)
+                    window['status'].update('TVLA Test Complete!')
+                    sg.popup(resultStr, font='Any 12')
                 else:
                     window['status'].update(text_color='red')
                     msgStr = 'Encryption tested with ' + str(MAXTRACES) + ' traces without recoering the key'
