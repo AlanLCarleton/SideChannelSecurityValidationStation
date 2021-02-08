@@ -45,6 +45,9 @@ while True:  # Event Loop
         window['tvla'].update(disabled=False)
         window['tvla'].update(not(values['dpa']))
         window['dpa'].update(disabled=True)
+        window['TRACENUMBER'].update(2000)
+        window['TRACEINCREMENT'].update(0)
+        MAXTRACES = 3000
     elif event == 'cpa':  # Set 'dpa' radio button to oposite of 'cpa'
         window['dpa'].update(disabled=False)
         window['dpa'].update(not(values['cpa']))
@@ -97,7 +100,8 @@ while True:  # Event Loop
             window['progbar'].update(20)
 
             attackTime = 0
-            attackResult = None
+            cpaAttackResult = None
+            dpaAttackResult = None
             tvlaResults = None
             sucess = False
             while not sucess and traceAmount <= MAXTRACES and boardInitialized:
@@ -114,17 +118,24 @@ while True:  # Event Loop
                         window['status'].update('Running CPA Attack')
                         window['progbar'].update(350)
 
-                        attackResult, attackTime, traceData = testAttacks.basicCPA(
+                        cpaAttackResult, attackTime, traceData = testAttacks.basicCPA(
                             scope, traceAmount)
-                        #window['progbar'].update(1000)
-                        #window['status'].update('CPA Attack Complete!')
+                        window['progbar'].update(1000)
+                        window['status'].update('CPA Attack Complete!')
                         #wtite results to CSV
-                        utils.writeResultsToCSV(attackResult)
+                        utils.writeResultsToCSV(cpaAttackResult)
                         if not(utils.checkZeroCorrelation()):
                             sucess = True
 
                     elif Type == 'DPA':
-                        print("Insert code here")
+                        window['status'].update('Running DPA Attack')
+                        window['progbar'].update(350)
+                        dpaAttackResult = testAttacks.basicCWDPA(
+                            scope, traceAmount)
+                        window['progbar'].update(1000)
+                        window['status'].update('CPA Attack Complete!')
+                        #wtite results to CSV
+                        #utils.writeResultsToCSV(dpaAttackResult)
                         sucess = True
 
                     # ROUGH IMPLEMENTATION OF TVLA
@@ -150,15 +161,27 @@ while True:  # Event Loop
                 window['status'].update(text_color='red')
                 window['status'].update('Board Initialization Failed')
             else:
-                if attackResult is not None:
+                if cpaAttackResult is not None:
                     window['progbar'].update(1000)
                     window['status'].update('CPA Attack Complete!')
-                    resultPrint = attackResult + "\nSucessful attack required: " + str(traceAmount - traceIncrement) + " traces\nand took: " + str(attackTime) + " seconds"
+                    resultPrint = cpaAttackResult + "\nSucessful attack required: " + \
+                        str(traceAmount - traceIncrement) + \
+                        " traces\nand took: " + str(attackTime) + " seconds"
                     sg.popup(resultPrint, font='Any 12')
+                    cpaAttackResult = None
+                elif dpaAttackResult is not None:
+                    window['progbar'].update(1000)
+                    window['status'].update('DPA Attack Complete!')
+                    #resultPrint = dpaAttackResult + "\nSucessful attack required: " + \
+                    #    str(traceAmount - traceIncrement) + \
+                    #    " traces\nand took: " + str(attackTime) + " seconds"
+                    sg.popup(dpaAttackResult, font='Any 12')
+                    dpaAttackResult = None
                 elif tvlaResults is not None:
                     window['progbar'].update(1000)
                     window['status'].update('TVLA Test Complete!')
                     sg.popup(resultStr, font='Any 12')
+                    tvlaResults = None
                 else:
                     window['status'].update(text_color='red')
                     msgStr = 'Encryption tested with ' + str(MAXTRACES) + ' traces without recoering the key'
