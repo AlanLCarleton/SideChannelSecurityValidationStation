@@ -128,23 +128,13 @@ def basicCWTVLA(scope, cryptoTarget, N):  # N number of traces as args
     plt.xlabel('trace')
     plt.ylabel('power difference')
     plt.show()
-    '''
-    #actually perform & plot t-test (idk if its welch)
-    t_val = ttest_ind(fixed_text_mean, rand_text_arr,
-                      axis=0, equal_var=False)[0]
-    #cw.plot(t_val)
-    plt.figure(3)
-    plt.title('T-test results')
-    plt.plot(t_val)
-    plt.xlabel('trace')
-    plt.ylabel('t-value')
-    plt.show()
-    '''
+    
     #Plot last comprehensive graph from SCA203 Tutorial
-    t_val = [ttest_ind(fixed_text_arr[:N//2], rand_text_arr[:N//2], axis=0, equal_var=False)
-             [0], ttest_ind(fixed_text_arr[N//2:], rand_text_arr[N//2:], axis=0, equal_var=False)[0]]
-    #cv = cw.plot(t_val[0]) * cw.plot(t_val[1]) * cw.plot([4.5]*len(fixed_text_arr[0])) * cw.plot([-4.5]*len(fixed_text_arr[0]))
-    #cv
+    #t_val = [ttest_ind(fixed_text_arr[:N//2], rand_text_arr[:N//2], axis=0, equal_var=False)
+    #         [0], ttest_ind(fixed_text_arr[N//2:], rand_text_arr[N//2:], axis=0, equal_var=False)[0]]
+    t_val = [utils.tTestCalculation(
+        fixed_text_arr[:N//2], rand_text_arr[:N//2]), utils.tTestCalculation(fixed_text_arr[N//2:], rand_text_arr[N//2:])]
+    
     t_valAbove = [[], []]
     for i in range(2):
         for x in t_val[i]:
